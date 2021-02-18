@@ -22,4 +22,13 @@ class GrantHandler(val repository: GrantRepository) : Handler {
             .findFirst()
             .orElse(Grant(uuid).also { this.cache.add(it); this.repository.updateAsync(it, it.uuid.toString()) })
     }
+
+    /**
+     * Register a [Grant] object to the cache
+     *
+     * @return the grant itself
+     */
+    fun registerGrant(grant: Grant): Grant {
+        return grant.also { this.cache.add(grant); this.repository.updateAsync(it, it.uuid.toString()) }
+    }
 }
