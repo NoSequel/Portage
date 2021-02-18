@@ -1,9 +1,7 @@
 package io.github.nosequel.portage.core.profile
 
 import com.google.gson.annotations.SerializedName
-import io.github.nosequel.portage.core.PortageAPI
 import io.github.nosequel.portage.core.expirable.impl.Grant
-import io.github.nosequel.portage.core.rank.RankHandler
 import java.util.UUID
 
 class Profile(@SerializedName("_id") val uuid: UUID, val name: String) {
@@ -17,11 +15,7 @@ class Profile(@SerializedName("_id") val uuid: UUID, val name: String) {
      */
     fun findRelevantGrant(): Grant {
         return this.grants.stream()
-            .filter { it.isActive() }
-            .sorted(Comparator.comparingInt { grant: Grant -> grant.rank.weight })
-            .findFirst()
-            .orElse(Grant(PortageAPI.instance.handler.findOrThrow(RankHandler::class.java).findDefaultRank()).also {
-                this.grants.add(it)
-            })
+            .filter { it.isActive() }.sorted(Comparator.comparingInt { grant: Grant -> grant.rank.weight })
+            .findFirst().orElse(Grant().also { this.grants.add(it) })
     }
 }
