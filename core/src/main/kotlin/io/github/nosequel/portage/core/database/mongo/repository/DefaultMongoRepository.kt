@@ -33,7 +33,7 @@ open class DefaultMongoRepository<T>(private val portageAPI: PortageAPI, private
     override fun retrieve(id: String): Optional<T> {
         val document: Document? = this.getCollection().find(Filters.eq("_id", id)).first();
 
-        return if(document == null) {
+        return if (document == null) {
             Optional.empty()
         } else {
             Optional.of(

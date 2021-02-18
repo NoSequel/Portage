@@ -1,4 +1,6 @@
 import io.github.nosequel.portage.core.PortageAPI
+import io.github.nosequel.portage.core.grant.GrantHandler
+import io.github.nosequel.portage.core.profile.Profile
 import io.github.nosequel.portage.core.profile.ProfileHandler
 import io.github.nosequel.portage.core.rank.RankHandler
 import org.junit.Test
@@ -11,8 +13,10 @@ class RankSaveTest {
         val portageAPI = PortageAPI()
         val rankHandler: RankHandler = portageAPI.handler.findOrThrow(RankHandler::class.java)
         val profileHandler: ProfileHandler = portageAPI.handler.findOrThrow(ProfileHandler::class.java)
+        val grantHandler: GrantHandler = portageAPI.handler.findOrThrow(GrantHandler::class.java)
+        val profile: Profile = profileHandler.load(UUID.randomUUID(), "NV6")
 
         println(rankHandler.findDefaultRank().name)
-        println(profileHandler.load(UUID.randomUUID(), "NV6").findRelevantGrant().rank.name)
+        println(grantHandler.findMostRelevantGrant(profile.uuid).findRank().name)
     }
 }

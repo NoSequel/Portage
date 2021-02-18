@@ -9,6 +9,10 @@ class RankHandler(private val repository: RankRepository) : Handler {
 
     val cache: MutableSet<Rank> = mutableSetOf()
 
+    override fun enable() {
+        this.repository.retrieveAsync().forEach { this.cache.add(it) }
+    }
+
     /**
      * Get the [Stream] object of [MutableSet] of [Rank]s
      */
@@ -37,6 +41,11 @@ class RankHandler(private val repository: RankRepository) : Handler {
         return this.stream()
             .filter { it.hasMetadata(Metadata.DEFAULT) }
             .findFirst()
-            .orElseGet { Rank("Default", Metadata.DEFAULT).also { this.repository.updateAsync(it, it.name) } }
+            .orElseGet {
+                Rank("Default", Metadata.DEFAULT).also {
+                    this.repository.updateAsync(it,
+                        it.name); this.cache.add(it)
+                }
+            }
     }
 }
