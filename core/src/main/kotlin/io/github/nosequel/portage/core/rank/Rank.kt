@@ -2,9 +2,8 @@ package io.github.nosequel.portage.core.rank
 
 import com.google.gson.annotations.SerializedName
 import io.github.nosequel.portage.core.rank.metadata.Metadata
-import java.util.UUID
 
-class Rank(@SerializedName("_id") val uniqueId: UUID = UUID.randomUUID(), val name: String, val defaultMetadata: Metadata = Metadata.UNIDENTIFIED) {
+class Rank(@SerializedName("_id") val name: String) {
 
     var prefix: String = ""
     var suffix: String = ""
@@ -15,6 +14,13 @@ class Rank(@SerializedName("_id") val uniqueId: UUID = UUID.randomUUID(), val na
 
     var permissions: MutableSet<String> = mutableSetOf()
     var metadata: MutableSet<Metadata> = mutableSetOf()
+
+    /**
+     * Constructor to make a new [Rank] object with default [Metadata] values
+     */
+    constructor(name: String, vararg metadata: Metadata) : this(name) {
+        metadata.forEach { this.metadata.add(it) }
+    }
 
     /**
      * Check if a [Rank] object contains a certain [Metadata] value

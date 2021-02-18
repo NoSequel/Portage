@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.core.handler
 
 import java.util.Optional
+import java.util.stream.Stream
 
 class HandlerManager(vararg handlers: Handler) {
 
@@ -31,8 +32,8 @@ class HandlerManager(vararg handlers: Handler) {
      * @throws NullPointerException if there is no handler with the specified class
      */
     fun <T> findOrThrow(clazz: Class<T>): T where T : Handler {
-        return clazz.cast(this.find(clazz)
-            .orElseThrow { NullPointerException("No handler found with class ${clazz.name}") })
+        return this.find(clazz)
+            .orElseThrow { NullPointerException("No handler found with class ${clazz.name}") }
     }
 
     /**
@@ -41,4 +42,12 @@ class HandlerManager(vararg handlers: Handler) {
     fun <T> register(handler: T) where T : Handler {
         this.handlers.add(handler)
     }
+
+    /**
+     * Open a new [Stream] for the [Handler] set
+     */
+    fun stream() : Stream<Handler> {
+        return this.handlers.stream()
+    }
+
 }

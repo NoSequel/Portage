@@ -3,7 +3,6 @@ package io.github.nosequel.portage.core.rank
 import io.github.nosequel.portage.core.handler.Handler
 import io.github.nosequel.portage.core.rank.metadata.Metadata
 import java.util.Optional
-import java.util.UUID
 import java.util.stream.Stream
 
 class RankHandler(private val repository: RankRepository) : Handler {
@@ -28,16 +27,6 @@ class RankHandler(private val repository: RankRepository) : Handler {
             .findAny()
     }
 
-    /**
-     * Find a [Rank] by a [UUID]
-     *
-     * @return the optional of the rank
-     */
-    fun find(uniqueId: UUID): Optional<Rank> {
-        return this.stream()
-            .filter { it.uniqueId == uniqueId }
-            .findAny()
-    }
 
     /**
      * Find the default [Rank], automatically makes a [Rank] with DEFAULT [Metadata] if it does not exist
@@ -48,8 +37,8 @@ class RankHandler(private val repository: RankRepository) : Handler {
         return this.stream()
             .filter { it.hasMetadata(Metadata.DEFAULT) }
             .findFirst().orElseGet {
-                val rank = Rank(UUID.randomUUID(), "Default", Metadata.DEFAULT)
-                this.repository.updateAsync(rank)
+                val rank = Rank("Default", Metadata.DEFAULT)
+                this.repository.updateAsync(rank, rank.name)
 
                 rank
             }

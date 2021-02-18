@@ -1,5 +1,7 @@
 package io.github.nosequel.portage.core.database.mongo.repository
 
+import java.util.Optional
+
 interface MongoRepository<T> {
 
     /**
@@ -10,16 +12,16 @@ interface MongoRepository<T> {
     /**
      * Retrieve an object from the repository
      */
-    fun retrieve(id: String): T
+    fun retrieve(id: String): Optional<T>
 
     /**
      * Update an object inside of the repository
      */
-    fun update(value: T): Boolean
+    fun update(value: T, id: String): Boolean
 
     /**
      * Delete an object from the repository
      */
-    fun delete(value: T): Boolean
+    fun delete(value: T, id: String): Boolean
 
 }
