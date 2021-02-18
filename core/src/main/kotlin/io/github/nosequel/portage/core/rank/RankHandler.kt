@@ -36,11 +36,7 @@ class RankHandler(private val repository: RankRepository) : Handler {
     fun findDefaultRank(): Rank {
         return this.stream()
             .filter { it.hasMetadata(Metadata.DEFAULT) }
-            .findFirst().orElseGet {
-                val rank = Rank("Default", Metadata.DEFAULT)
-                this.repository.updateAsync(rank, rank.name)
-
-                rank
-            }
+            .findFirst()
+            .orElseGet { Rank("Default", Metadata.DEFAULT).also { this.repository.updateAsync(it, it.name) } }
     }
 }
