@@ -1,0 +1,4 @@
+main: io.github.nosequel.portage.bukkit.PortagePlugin
+version: 1.0-SNAPSHOT
+name: Portage
+author: NoSQL
