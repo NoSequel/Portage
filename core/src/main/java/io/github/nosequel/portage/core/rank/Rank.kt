@@ -10,7 +10,6 @@ class Rank(@SerializedName("_id") val name: String) {
     var color: String = "§f"
 
     var weight: Int = 0
-    var hidden: Boolean = false
 
     var permissions: MutableSet<String> = mutableSetOf()
     var metadata: MutableSet<Metadata> = mutableSetOf()

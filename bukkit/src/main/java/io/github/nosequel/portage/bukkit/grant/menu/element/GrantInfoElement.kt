@@ -49,13 +49,13 @@ class GrantInfoElement(index: Int, val grant: Grant, menu: Menu) : ButtonBuilder
             true
         }
 
-        this.displayName("${ChatColor.RED}${this.grant.uuid.toString().substring(0, 7)}")
+        this.displayName("${ChatColor.RED}${this.grant.uuid.toString().substring(0, 12)}")
         this.lore(*lore.toTypedArray())
     }
 
     override fun toItemStack(): ItemStack {
         return super.toItemStack().clone().also {
-            it.durability = (if (grant.isActive()) DyeColor.GREEN.data else DyeColor.RED.data).toShort()
+            it.durability = (if (grant.isActive()) DyeColor.GREEN.data else DyeColor.YELLOW.data).toShort()
         }
     }
 }

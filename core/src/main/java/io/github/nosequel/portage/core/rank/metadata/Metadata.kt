@@ -1,10 +1,10 @@
 package io.github.nosequel.portage.core.rank.metadata
 
-enum class Metadata(val id: String, val displayName: String, val display: Boolean, val displayItem: String) {
+enum class Metadata(val displayName: String, val display: Boolean, val displayItem: String) {
 
-    UNIDENTIFIED("Unidentified", "§cUnidentified", false, "AIR"),
-    DEFAULT("Default", "§fDefault", true, "GRASS"),
-    DONATOR("Donator", "§aDonator", true, "EMERALD"),
-    STAFF("Staff", "§9Staff", true, "DIAMOND"),
+    DEFAULT("§fDefault", true, "GRASS"),
+    DONATOR("§aDonator", true, "EMERALD"),
+    STAFF("§9Staff", true, "DIAMOND"),
+    HIDDEN("§7Hidden", true, "GLASS")
 
 }
