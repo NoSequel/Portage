@@ -1,10 +1,7 @@
 package io.github.nosequel.portage.bukkit.grant.menu.element
 
 import io.github.nosequel.menus.button.ButtonBuilder
-import io.github.nosequel.portage.bukkit.grant.menu.duration.DurationMenu
-import io.github.nosequel.portage.core.grant.Grant
-import io.github.nosequel.portage.core.grant.GrantHandler
-import io.github.nosequel.portage.core.handler.HandlerManager
+import io.github.nosequel.portage.bukkit.grant.menu.duration.CalendarMenu
 import io.github.nosequel.portage.core.rank.Rank
 import org.apache.commons.lang.StringUtils
 import org.bukkit.ChatColor
@@ -22,6 +19,6 @@ class RankSelectElement(index: Int, val target: UUID, val player: Player, val ra
             "${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}${StringUtils.repeat("-", 24)}"
         )
 
-        this.action { player.closeInventory().also { DurationMenu(player, target, rank).updateMenu() }; true }
+        this.action { player.closeInventory().also { CalendarMenu(player, rank, target).updateMenu() }; true }
     }
 }
