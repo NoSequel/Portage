@@ -1,3 +1,3 @@
 package io.github.nosequel.portage.core.expirable
 
-class ExpirationData(reason: String, date: Long)
+class ExpirationData(val reason: String, val date: Long)

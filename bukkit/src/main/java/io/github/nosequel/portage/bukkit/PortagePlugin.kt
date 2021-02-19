@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.bukkit
 
 import io.github.nosequel.menus.MenuHandler
+import io.github.nosequel.portage.bukkit.grant.GrantCommand
 import io.github.nosequel.portage.bukkit.rank.RankCommand
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptHandler
 import io.github.nosequel.portage.bukkit.listener.ChatPromptListener
@@ -27,7 +28,7 @@ class PortagePlugin : JavaPlugin() {
 
         // register commands
         this.portageAPI.handler.register(CommandHandler("portage")
-            .also { it.registerCommand(RankCommand(this.portageAPI)) }
+            .also { it.registerCommand(RankCommand(this.portageAPI), GrantCommand()) }
             .also { it.enable() })
 
         // register menu handler
@@ -35,6 +36,6 @@ class PortagePlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-
+        this.portageAPI.disable()
     }
 }

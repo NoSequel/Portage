@@ -30,7 +30,11 @@ class CommandHandler(val fallbackPrefix: String) : Handler {
      * @param objects the commands
      */
     fun registerCommand(vararg objects: Any?) {
-        objects.forEach { this.registerCommand(it) }
+        objects.forEach {
+            if (it != null) {
+                this.register(it)
+            }
+        }
     }
 
     /**
@@ -38,7 +42,7 @@ class CommandHandler(val fallbackPrefix: String) : Handler {
      *
      * @param object the object
      */
-    fun registerCommand(`object`: Any) {
+    fun register(`object`: Any) {
         val commandMethods = getMethods(Command::class.java, `object`)
         val subcommands = getMethods(Subcommand::class.java, `object`)
 

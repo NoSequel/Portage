@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 import io.github.nosequel.portage.core.PortageConstants
 import java.util.UUID
 
-abstract class Expirable(@SerializedName("_id") val uuid: UUID, val reason: String, val executor: UUID=PortageConstants.consoleUuid, val duration: Long=-1L, val start: Long=System.currentTimeMillis()) {
+abstract class Expirable(@SerializedName("_id") val uuid: UUID, val reason: String, val executor: UUID=PortageConstants.consoleUuid, var duration: Long=-1L, val start: Long=System.currentTimeMillis()) {
 
-    private var expired = false;
+    var expired = false;
     var expirationData: ExpirationData? = null
 
     /**
@@ -19,7 +19,7 @@ abstract class Expirable(@SerializedName("_id") val uuid: UUID, val reason: Stri
             this.expire("Expired")
         }
 
-        return this.expired
+        return !this.expired
     }
 
     /**
@@ -27,5 +27,6 @@ abstract class Expirable(@SerializedName("_id") val uuid: UUID, val reason: Stri
      */
     fun expire(reason: String) {
         this.expirationData = ExpirationData(reason, System.currentTimeMillis())
+        this.expired = true
     }
 }

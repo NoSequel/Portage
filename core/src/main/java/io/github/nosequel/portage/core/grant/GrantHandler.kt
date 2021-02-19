@@ -2,6 +2,7 @@ package io.github.nosequel.portage.core.grant
 
 import io.github.nosequel.portage.core.handler.Handler
 import java.util.UUID
+import java.util.stream.Collectors
 import java.util.stream.Stream
 
 class GrantHandler(val repository: GrantRepository) : Handler {
@@ -19,7 +20,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
     /**
      * Open a new [Stream] for the cache of grants
      */
-    fun stream() : Stream<Grant> {
+    fun stream(): Stream<Grant> {
         return this.cache.stream()
     }
 
@@ -29,12 +30,21 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * @return the grant
      */
     fun findMostRelevantGrant(uuid: UUID): Grant {
-        return this.cache.stream()
-            .filter { it.target == uuid }
+        return findGrantsByTarget(uuid).stream()
+            .filter { it.isActive() }
             .findFirst()
-            .orElse(Grant(uuid).also { this.cache.add(it); this.repository.updateAsync(it, it.uuid.toString()) })
+            .orElseGet { Grant(uuid).also { this.cache.add(it); this.repository.updateAsync(it, it.uuid.toString()) } }
     }
 
+    /**
+     * Find all the [Grant]s by a [UUID]
+     */
+    fun findGrantsByTarget(uuid: UUID): Collection<Grant> {
+        return this.cache.stream()
+            .filter { it.target == uuid }
+            .sorted(Comparator.comparingInt { -it.findRank().weight })
+            .collect(Collectors.toList())
+    }
 
 
     /**
@@ -42,7 +52,13 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      *
      * @return the grant itself
      */
-    fun registerGrant(grant: Grant): Grant {
+    fun registerGrant(grant: Grant): Grant? {
+        if (this.stream()
+                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
+        ) {
+            return null
+        }
+
         return grant.also { this.cache.add(grant); this.repository.updateAsync(it, it.uuid.toString()) }
     }
 }
