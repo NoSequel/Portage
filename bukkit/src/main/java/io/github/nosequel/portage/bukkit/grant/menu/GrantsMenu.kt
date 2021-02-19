@@ -20,7 +20,7 @@ class GrantsMenu(player: Player, private val target: UUID) : PaginatedMenu(playe
         val index = AtomicInteger()
 
         return this.grantHandler.findGrantsByTarget(target).stream()
-            .map { GrantInfoElement(index.getAndIncrement(), it, player) }
+            .map { GrantInfoElement(index.getAndIncrement(), it, this) }
             .collect(Collectors.toList())
     }
 

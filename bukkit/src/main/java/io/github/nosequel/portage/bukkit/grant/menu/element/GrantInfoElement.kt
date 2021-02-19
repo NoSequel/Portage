@@ -1,15 +1,19 @@
 package io.github.nosequel.portage.bukkit.grant.menu.element
 
 import io.github.nosequel.menus.button.ButtonBuilder
+import io.github.nosequel.menus.menu.Menu
 import io.github.nosequel.portage.core.grant.Grant
 import org.apache.commons.lang.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 import java.util.Date
 
-class GrantInfoElement(index: Int, val grant: Grant, val player: Player) : ButtonBuilder(index, Material.WOOL) {
+class GrantInfoElement(index: Int, val grant: Grant, menu: Menu) : ButtonBuilder(index, Material.WOOL) {
 
     init {
         val lore: MutableList<String> = mutableListOf(
@@ -33,7 +37,6 @@ class GrantInfoElement(index: Int, val grant: Grant, val player: Player) : Butto
         }
 
         this.action {
-            println(grant.isActive())
             if (grant.isActive()) {
                 grant.expire("Unspecified")
             } else {
@@ -42,10 +45,17 @@ class GrantInfoElement(index: Int, val grant: Grant, val player: Player) : Butto
                 grant.duration = -1L
             }
 
+            menu.updateMenu()
             true
         }
 
         this.displayName("${ChatColor.RED}${this.grant.uuid.toString().substring(0, 7)}")
         this.lore(*lore.toTypedArray())
+    }
+
+    override fun toItemStack(): ItemStack {
+        return super.toItemStack().clone().also {
+            it.durability = (if (grant.isActive()) DyeColor.GREEN.data else DyeColor.RED.data).toShort()
+        }
     }
 }
