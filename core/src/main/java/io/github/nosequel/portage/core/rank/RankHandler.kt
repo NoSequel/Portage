@@ -22,6 +22,7 @@ class RankHandler(val repository: RankRepository) : Handler {
      */
     fun stream(): Stream<Rank> {
         return this.cache.stream()
+            .sorted(Comparator.comparingInt { -it.weight })
     }
 
     /**
