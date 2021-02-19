@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PortagePlugin : JavaPlugin() {
 
-    val portageAPI: PortageAPI = PortageAPI(HandlerManager())
+    private val portageAPI: PortageAPI = PortageAPI(HandlerManager())
 
     override fun onEnable() {
         this.portageAPI.handler.register(ChatPromptHandler().also { it.enable() })

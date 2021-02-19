@@ -22,11 +22,6 @@ class RankSelectElement(index: Int, val target: UUID, val player: Player, val ra
             "${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}${StringUtils.repeat("-", 24)}"
         )
 
-        this.action {
-            player.closeInventory()
-            DurationMenu(player, target, rank).updateMenu()
-
-            true
-        }
+        this.action { player.closeInventory().also { DurationMenu(player, target, rank).updateMenu() }; true }
     }
 }

@@ -14,8 +14,10 @@ interface ChatPrompt<T> {
      */
     fun handleInput(player: Player, message: String, value: T): ChatPromptResult
 
-    fun handleInputCast(player: Player, message: String, value: Any) : ChatPromptResult {
+    /**
+     * Handle the input of a [ChatPrompt] object and automatically cast the [Any] value of the method to <T>
+     */
+    fun handleInputCast(player: Player, message: String, value: Any): ChatPromptResult {
         return this.handleInput(player, message, value as T)
     }
-
 }

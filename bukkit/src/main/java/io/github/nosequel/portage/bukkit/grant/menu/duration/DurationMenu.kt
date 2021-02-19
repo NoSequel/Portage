@@ -28,24 +28,22 @@ class DurationMenu(player: Player, val target: UUID, val rank: Rank) : Menu(play
 
         buttons.add(ButtonBuilder(0, Material.EMERALD)
             .displayName("${ChatColor.GREEN}Confirm Duration")
-            .lore(
-                "${ChatColor.YELLOW}Current Duration: ${ChatColor.WHITE}${if (this.promptData.duration == -1L) "Permanent" else "${this.promptData.duration}"}"
-            ).action {
+            .lore("${ChatColor.YELLOW}Current Duration: ${ChatColor.WHITE}${if (this.promptData.duration == -1L) "Permanent" else "${this.promptData.duration}"}")
+            .action {
                 player.closeInventory()
                 this.promptHandler.startPrompt(player, GrantReasonPrompt(), promptData)
                 true
             })
 
-        DurationType.values()
-            .map {
-                ButtonBuilder(index.getAndIncrement(), Material.WATCH)
-                    .displayName("${ChatColor.GOLD}${it.displayName}")
-                    .lore("${ChatColor.YELLOW}Click here to add this to the current duration")
-                    .action { type: ClickType ->
-                        this.promptData.duration += it.duration
-                        true
-                    }
-            }.forEach { buttons.add(it) }
+        DurationType.values().map {
+            ButtonBuilder(index.getAndIncrement(), Material.WATCH)
+                .displayName("${ChatColor.GOLD}${it.displayName}")
+                .lore("${ChatColor.YELLOW}Click here to add this to the current duration")
+                .action { type: ClickType -> // ugly hack, only made here so i can use `it` from the original lambda expression.
+                    this.promptData.duration += it.duration
+                    true
+                }
+        }.forEach { buttons.add(it) }
 
         return buttons
     }
