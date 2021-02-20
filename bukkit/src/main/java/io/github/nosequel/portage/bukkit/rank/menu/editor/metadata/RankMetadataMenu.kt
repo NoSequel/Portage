@@ -17,7 +17,7 @@ class RankMetadataMenu(player: Player, val rank: Rank) : Menu(player, "Edit Rank
 
         return Metadata.values()
             .filter { it.display }
-            .map { RankMetadataToggleElement(index.getAndIncrement(), it, rank) }
+            .map { RankMetadataToggleElement(index.getAndIncrement(), it, rank, this) }
             .toCollection(mutableListOf())
     }
 

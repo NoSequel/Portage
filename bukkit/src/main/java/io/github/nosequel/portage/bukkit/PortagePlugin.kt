@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.bukkit
 
 import io.github.nosequel.menus.MenuHandler
+import io.github.nosequel.portage.bukkit.command.ListCommand
 import io.github.nosequel.portage.bukkit.grant.GrantCommand
 import io.github.nosequel.portage.bukkit.rank.RankCommand
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptHandler
@@ -28,7 +29,7 @@ class PortagePlugin : JavaPlugin() {
 
         // register commands
         this.portageAPI.handler.register(CommandHandler("portage")
-            .also { it.registerCommand(RankCommand(this.portageAPI), GrantCommand()) }
+            .also { it.registerCommand(RankCommand(this.portageAPI), GrantCommand(), ListCommand()) }
             .also { it.enable() })
 
         // register menu handler

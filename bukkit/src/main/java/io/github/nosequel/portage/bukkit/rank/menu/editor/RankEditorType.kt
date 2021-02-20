@@ -1,5 +1,6 @@
 package io.github.nosequel.portage.bukkit.rank.menu.editor
 
+import io.github.nosequel.menus.menu.Menu
 import io.github.nosequel.portage.bukkit.rank.menu.editor.metadata.RankMetadataMenu
 import io.github.nosequel.portage.bukkit.rank.prompt.RankEditColorPrompt
 import io.github.nosequel.portage.bukkit.rank.prompt.RankEditPrefixPrompt
@@ -26,7 +27,7 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             )
         }
 
-        override fun getAction(rank: Rank, clickType: ClickType): Consumer<Player> {
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
             return Consumer { it.closeInventory(); this.promptHandler.startPrompt(it, RankEditPrefixPrompt(), rank) }
         }
     },
@@ -41,7 +42,7 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             )
         }
 
-        override fun getAction(rank: Rank, clickType: ClickType): Consumer<Player> {
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
             return Consumer { it.closeInventory(); this.promptHandler.startPrompt(it, RankEditSuffixPrompt(), rank) }
         }
     },
@@ -56,8 +57,11 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             )
         }
 
-        override fun getAction(rank: Rank, clickType: ClickType): Consumer<Player> {
-            return Consumer { it.closeInventory(); this.promptHandler.startPrompt(it, RankEditColorPrompt(), rank) }
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
+            return Consumer {
+                it.closeInventory();
+                this.promptHandler.startPrompt(it, RankEditColorPrompt(), rank)
+            }
         }
     },
 
@@ -71,8 +75,11 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             )
         }
 
-        override fun getAction(rank: Rank, clickType: ClickType): Consumer<Player> {
-            return Consumer { rank.weight = if (clickType.isLeftClick) rank.weight + 1 else rank.weight - 1 }
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
+            return Consumer {
+                rank.weight = if (clickType.isLeftClick) rank.weight + 1 else rank.weight - 1;
+                menu.updateMenu()
+            }
         }
     },
 
@@ -86,14 +93,17 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             )
         }
 
-        override fun getAction(rank: Rank, clickType: ClickType): Consumer<Player> {
-            return Consumer { it.closeInventory(); RankMetadataMenu(it, rank).updateMenu() }
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
+            return Consumer {
+                it.closeInventory()
+                RankMetadataMenu(it, rank).updateMenu()
+            }
         }
     };
 
     val promptHandler: ChatPromptHandler = HandlerManager.instance.findOrThrow(ChatPromptHandler::class.java)
 
     abstract fun getLore(rank: Rank): Array<String>
-    abstract fun getAction(rank: Rank, clickType: ClickType): Consumer<Player>
+    abstract fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player>
 
 }

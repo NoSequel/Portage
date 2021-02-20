@@ -20,7 +20,7 @@ class RankEditorMenu(val rank: Rank, player: Player) : PaginatedMenu(player, "Ra
                 ButtonBuilder(index.getAndIncrement(), it.material)
                     .displayName(it.displayName)
                     .lore(*it.getLore(rank))
-                    .action { clickType: ClickType -> it.getAction(rank, clickType).accept(player); true }
+                    .action { clickType: ClickType -> it.getAction(rank, clickType, this).accept(player); true }
             }.toCollection(mutableListOf())
     }
 
