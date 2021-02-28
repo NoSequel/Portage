@@ -7,7 +7,7 @@ import java.util.UUID
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
-class PunishmentHandler(val repository: PunishmentRepository) : Handler {
+class PunishmentHandler(val repository: PunishmentRepository, val punishmentActionHandler: PunishmentActionHandler) : Handler {
 
     val cache: MutableSet<Punishment> = mutableSetOf()
 
@@ -64,5 +64,13 @@ class PunishmentHandler(val repository: PunishmentRepository) : Handler {
             this.repository.updateAsync(it, it.uuid.toString())
             this.cache.add(it)
         }
+    }
+
+    /**
+     * Attempt to ban a player
+     */
+    fun attemptBan(target: UUID) {
+        this.findMostRelevantPunishment(target, PunishmentType.BAN)
+            .ifPresent { this.punishmentActionHandler.attemptBan(target, it) }
     }
 }

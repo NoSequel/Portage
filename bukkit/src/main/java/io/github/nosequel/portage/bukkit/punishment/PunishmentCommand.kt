@@ -20,45 +20,48 @@ class PunishmentCommand {
         HandlerManager.instance.findOrThrow(PunishmentHandler::class.java)
 
     @Command(label = "ban", permission = "portage.ban")
-    fun ban(sender: CommandSender, targetName: String, @Parameter(value="No reason provided", name = "reason") reason: String) {
-        val target: OfflinePlayer = UUIDFetcher.getOfflinePlayer(targetName)
-
-        if (target.firstPlayed > 0) {
-            this.punishmentHandler.registerPunishment(Punishment(
-                target.uniqueId,
-                PunishmentType.BAN,
-                UUID.randomUUID(),
-                reason
-            ))
-        } else {
-            sender.sendMessage("${ChatColor.RED}That player has never played before")
-        }
+    fun ban(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.BAN)
     }
 
     @Command(label = "tempban", permission = "portage.tempban")
-    fun tempban(sender: CommandSender, targetName: String, duration: Duration, @Parameter(value="No reason provided", name = "reason") reason: String) {
-        val target: OfflinePlayer = UUIDFetcher.getOfflinePlayer(targetName)
+    fun tempban(sender: CommandSender, targetName: String, duration: Duration, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.BAN)
+    }
 
+    @Command(label = "unban", permission = "portage.unban")
+    fun unban(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.BAN)
+    }
+
+    /**
+     * Handle the punishment of an [OfflinePlayer]
+     */
+    private fun punish(sender: CommandSender, target: OfflinePlayer, reason: String, duration: Duration, type: PunishmentType) {
         if (target.firstPlayed > 0) {
             this.punishmentHandler.registerPunishment(Punishment(
                 target.uniqueId,
-                PunishmentType.BAN,
+                type,
                 UUID.randomUUID(),
                 reason,
                 duration = duration.duration
             ))
+
+            if (type == PunishmentType.BAN) {
+                this.punishmentHandler.attemptBan(target.uniqueId)
+            }
         } else {
             sender.sendMessage("${ChatColor.RED}That player has never played before")
         }
     }
 
-    @Command(label = "unban", permission = "portage.unban")
-    fun unban(sender: CommandSender, targetName: String, @Parameter(value="No reason provided", name = "reason") reason: String) {
-        val target: OfflinePlayer = UUIDFetcher.getOfflinePlayer(targetName)
-
+    /**
+     * Handle the unpunishment of an [OfflinePlayer]
+     */
+    private fun unpunish(sender: CommandSender, target: OfflinePlayer, reason: String, type: PunishmentType) {
         if (target.firstPlayed > 0) {
             val punishment: Optional<Punishment> =
-                this.punishmentHandler.findMostRelevantPunishment(target.uniqueId, PunishmentType.BAN)
+                this.punishmentHandler.findMostRelevantPunishment(target.uniqueId, type)
 
             if (!punishment.isPresent) {
                 sender.sendMessage("${ChatColor.RED}That player does not have any active punishments.")

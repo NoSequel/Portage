@@ -21,7 +21,11 @@ class PunishmentListener : Listener {
         this.punishmentHandler.findMostRelevantPunishment(event.player.uniqueId, PunishmentType.BAN)
             .ifPresent {
                 event.disallow(PlayerLoginEvent.Result.KICK_BANNED,
-                    "${ChatColor.RED}You are currently banned for violating our terms of service,\n${ChatColor.RED}Reason: ${ChatColor.LIGHT_PURPLE}${it.reason}")
+                    "${ChatColor.YELLOW}You are currently banned from this server." +
+                            "\n${ChatColor.YELLOW}Reason: ${ChatColor.LIGHT_PURPLE}${it.reason}" +
+                            "\n" +
+                            "\n" +
+                            "${ChatColor.GRAY}You can appeal your punishment, or purchase an unban.")
             }
     }
 

@@ -9,6 +9,7 @@ import io.github.nosequel.portage.bukkit.listener.ChatPromptListener
 import io.github.nosequel.portage.bukkit.listener.ProfileListener
 import io.github.nosequel.portage.bukkit.listener.PunishmentListener
 import io.github.nosequel.portage.bukkit.punishment.PunishmentCommand
+import io.github.nosequel.portage.bukkit.punishment.action.BukkitPunishmentActionHandler
 import io.github.nosequel.portage.core.punishments.PunishmentHandler
 import io.github.nosequel.portage.bukkit.util.command.CommandHandler
 import io.github.nosequel.portage.core.PortageAPI
@@ -22,7 +23,9 @@ class PortagePlugin : JavaPlugin() {
     private val portageAPI: PortageAPI = PortageAPI(HandlerManager())
 
     override fun onEnable() {
-        this.portageAPI.handler.register(PunishmentHandler(PunishmentRepository(this.portageAPI)).also { it.enable() })
+        this.portageAPI.handler.register(PunishmentHandler(PunishmentRepository(this.portageAPI),
+            BukkitPunishmentActionHandler()).also { it.enable() })
+
         this.portageAPI.handler.register(ChatPromptHandler().also { it.enable() })
 
         arrayOf(
