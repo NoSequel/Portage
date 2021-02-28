@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.core.grant
 
-import io.github.nosequel.portage.core.PortageAPI
 import io.github.nosequel.portage.core.PortageConstants
 import io.github.nosequel.portage.core.expirable.Expirable
 import io.github.nosequel.portage.core.handler.HandlerManager
@@ -10,7 +9,7 @@ import java.util.UUID
 
 class Grant(
     val target: UUID,
-    val rankId: String = HandlerManager.instance.findOrThrow(RankHandler::class.java).findDefaultRank().name,
+    var rankId: String = HandlerManager.instance.findOrThrow(RankHandler::class.java).findDefaultRank().name,
     uuid: UUID = UUID.randomUUID(),
     reason: String = "Unidentified",
     executor: UUID = PortageConstants.consoleUuid,
@@ -24,7 +23,12 @@ class Grant(
      * @return the rank or null
      */
     fun findRank(): Rank {
-        return HandlerManager.instance.findOrThrow(RankHandler::class.java)
-            .find(this.rankId).orElse(null)
+        val rankHandler: RankHandler = HandlerManager.instance.findOrThrow(RankHandler::class.java)
+
+        return rankHandler.find(this.rankId)
+            .orElseGet {
+                rankHandler.findDefaultRank()
+                    .also { this.rankId = it.name }
+            }
     }
 }

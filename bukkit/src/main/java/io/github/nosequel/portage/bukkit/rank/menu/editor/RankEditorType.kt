@@ -2,6 +2,7 @@ package io.github.nosequel.portage.bukkit.rank.menu.editor
 
 import io.github.nosequel.menus.menu.Menu
 import io.github.nosequel.portage.bukkit.rank.menu.editor.metadata.RankMetadataMenu
+import io.github.nosequel.portage.bukkit.rank.menu.editor.permission.RankPermissionMenu
 import io.github.nosequel.portage.bukkit.rank.prompt.RankEditColorPrompt
 import io.github.nosequel.portage.bukkit.rank.prompt.RankEditPrefixPrompt
 import io.github.nosequel.portage.bukkit.rank.prompt.RankEditSuffixPrompt
@@ -79,6 +80,21 @@ enum class RankEditorType(val displayName: String, val material: Material) {
             return Consumer {
                 rank.weight = if (clickType.isLeftClick) rank.weight + 1 else rank.weight - 1;
                 menu.updateMenu()
+            }
+        }
+    },
+
+    PERMISSION("${ChatColor.GOLD}Edit Permissions", Material.PAPER) {
+        override fun getLore(rank: Rank): Array<String> {
+            return arrayOf(
+                "${ChatColor.GRAY}Click to open the menu to add permissions"
+            )
+        }
+
+        override fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player> {
+            return Consumer {
+                it.closeInventory()
+                RankPermissionMenu(it, rank).updateMenu()
             }
         }
     },

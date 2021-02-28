@@ -1,5 +1,6 @@
 package io.github.nosequel.portage.bukkit.rank.prompt
 
+import io.github.nosequel.portage.bukkit.rank.menu.editor.RankEditorMenu
 import io.github.nosequel.portage.bukkit.util.chat.ChatPrompt
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptResult
 import io.github.nosequel.portage.core.rank.Rank
@@ -13,6 +14,9 @@ class RankEditColorPrompt : ChatPrompt<Rank> {
     }
 
     override fun handleInput(player: Player, message: String, value: Rank): ChatPromptResult {
-        return ChatPromptResult("", true).also { value.color = message.replace("&", "§") }
+        return ChatPromptResult("", true).also {
+            value.color = message.replace("&", "§")
+            RankEditorMenu(value, player).updateMenu()
+        }
     }
 }

@@ -2,8 +2,10 @@ package io.github.nosequel.portage.bukkit.listener
 
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptData
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptHandler
+import io.github.nosequel.portage.core.grant.Grant
 import io.github.nosequel.portage.core.grant.GrantHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
+import io.github.nosequel.portage.core.rank.Rank
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -29,9 +31,10 @@ class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
                     }
             }
         } else {
-            event.format = "${
-                grantHandler.findMostRelevantGrant(player.uniqueId).findRank().prefix
-            }%s${ChatColor.GRAY}: ${ChatColor.WHITE}%s"
+            val grant: Grant = grantHandler.findMostRelevantGrant(player.uniqueId)
+            val rank: Rank = grant.findRank()
+
+            event.format = "${rank.prefix}%s${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}%s"
         }
     }
 }
