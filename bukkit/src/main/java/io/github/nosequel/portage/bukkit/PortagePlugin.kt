@@ -8,6 +8,7 @@ import io.github.nosequel.portage.bukkit.util.chat.ChatPromptHandler
 import io.github.nosequel.portage.bukkit.listener.ChatPromptListener
 import io.github.nosequel.portage.bukkit.listener.ProfileListener
 import io.github.nosequel.portage.bukkit.listener.PunishmentListener
+import io.github.nosequel.portage.bukkit.punishment.PunishmentCommand
 import io.github.nosequel.portage.core.punishments.PunishmentHandler
 import io.github.nosequel.portage.bukkit.util.command.CommandHandler
 import io.github.nosequel.portage.core.PortageAPI
@@ -34,7 +35,12 @@ class PortagePlugin : JavaPlugin() {
 
         // register commands
         this.portageAPI.handler.register(CommandHandler("portage")
-            .also { it.registerCommand(RankCommand(this.portageAPI), GrantCommand(), ListCommand()) }
+            .also {
+                it.registerCommand(RankCommand(this.portageAPI),
+                    GrantCommand(),
+                    ListCommand(),
+                    PunishmentCommand())
+            }
             .also { it.enable() })
 
         // register menu handler

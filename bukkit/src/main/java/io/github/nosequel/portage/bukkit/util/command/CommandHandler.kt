@@ -1,5 +1,6 @@
 package io.github.nosequel.portage.bukkit.util.command
 
+import io.github.nosequel.portage.bukkit.expirable.DurationTypeAdapter
 import io.github.nosequel.portage.bukkit.rank.adapter.RankTypeAdapter
 import io.github.nosequel.portage.bukkit.util.command.adapter.TypeAdapter
 import io.github.nosequel.portage.bukkit.util.command.adapter.defaults.*
@@ -126,11 +127,6 @@ class CommandHandler(val fallbackPrefix: String) : Handler {
         lateinit var instance: CommandHandler
     }
 
-    /**
-     * Create a new instance of the CommandModule class
-     *
-     * @param fallbackPrefix the fallback prefix
-     */
     init {
         instance = this
 
@@ -140,7 +136,8 @@ class CommandHandler(val fallbackPrefix: String) : Handler {
             LongTypeAdapter(),
             IntegerTypeAdapter(),
             PlayerTypeAdapter(),
-            RankTypeAdapter()
+            RankTypeAdapter(),
+            DurationTypeAdapter()
         ))
     }
 }

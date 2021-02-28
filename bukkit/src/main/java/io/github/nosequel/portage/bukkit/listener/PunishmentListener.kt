@@ -32,6 +32,5 @@ class PunishmentListener : Listener {
                 event.isCancelled = true
                 event.player.sendMessage("${ChatColor.RED}You are currently muted for violating our terms of service,\n${ChatColor.RED}Reason: ${ChatColor.LIGHT_PURPLE}${it.reason}")
             }
-
     }
 }
