@@ -34,6 +34,21 @@ class PunishmentCommand {
         this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.BAN)
     }
 
+    @Command(label="mute", permission="portage.mute")
+    fun mute(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.MUTE)
+    }
+
+    @Command(label = "tempmute", permission = "portage.tempmute")
+    fun tempmute(sender: CommandSender, targetName: String, duration: Duration, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.MUTE)
+    }
+
+    @Command(label = "unmute", permission = "portage.unmute")
+    fun unmute(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+        this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.MUTE)
+    }
+
     /**
      * Handle the punishment of an [OfflinePlayer]
      */
