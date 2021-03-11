@@ -17,10 +17,10 @@ We currently do not offer many features, however we offer the basic functionalit
 # Building
 We use [maven](https://maven.apache.org/) to manage our dependencies and build our plugin.
 
-## Compiling:
+### Compiling:
 You should compile the plugin using the command ```mvn clean install```, this will compile the plugin and put the bukkit jar under ```bukkit/target```
 
-## Running:
+### Running:
   We currently only support 1 database, which is MongoDB, and the settings for it must be changed inside of the PortageAPI class, 
   we might add configurations later, however this is currently futile since it won't be widely used.
   
