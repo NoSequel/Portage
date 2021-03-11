@@ -1,5 +1,7 @@
 # Portage
-Portage is a multi-purpose, extensible network, optimized core written in Kotlin.
+Portage is a multi-purpose, extensible network, optimized core written in Kotlin. 
+I currently do not recommend using it in it's current state, 
+therefore I won't publish releases for this until further notice.
 
 # Todo
 - We currently do not have any form of synchronization, therefore it should ideally only be used on single-instance servers, we are planning to add this as a feature later on.
@@ -16,8 +18,8 @@ We currently do not offer many features, however we offer the basic functionalit
 We use [maven](https://maven.apache.org/) to manage our dependencies and build our plugin.
 
 ## Compiling:
-  ```mvn clean install```
-  This compiles the plugin and will put the plugin inside of the /bukkit/target/ folder, under Portage-Bukkit-(version)-SNAPSHOT.jar
+
+You should compile the plugin using the command ```mvn clean install```, this will compile the plugin and put the bukkit jar under ```bukkit/target```
 
 ## Running:
   We currently only support 1 database, which is MongoDB, and the settings for it must be changed inside of the PortageAPI class, 
