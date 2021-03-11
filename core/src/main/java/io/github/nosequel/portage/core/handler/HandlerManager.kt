@@ -5,7 +5,7 @@ import java.util.stream.Stream
 
 class HandlerManager(vararg handlers: Handler) {
 
-    private val handlers: MutableSet<Handler> = mutableSetOf()
+    private val handlers: MutableMap<Class<Handler>, Handler> = mutableMapOf()
 
     companion object {
         lateinit var instance: HandlerManager
@@ -24,10 +24,7 @@ class HandlerManager(vararg handlers: Handler) {
      * @return the handler optional
      */
     fun <T> find(clazz: Class<T>): Optional<T> where T : Handler {
-        return this.handlers.stream()
-            .filter { it.javaClass == clazz }
-            .map { clazz.cast(it) }
-            .findAny()
+        return Optional.of(clazz.cast(this.handlers.get(clazz)))
     }
 
     /**
@@ -45,13 +42,13 @@ class HandlerManager(vararg handlers: Handler) {
      * Register a [Handler] object
      */
     fun <T> register(handler: T) where T : Handler {
-        this.handlers.add(handler)
+        this.handlers[handler.javaClass] = handler
     }
 
     /**
      * Open a new [Stream] for the [Handler] set
      */
     fun stream(): Stream<Handler> {
-        return this.handlers.stream()
+        return this.handlers.values.stream()
     }
 }
