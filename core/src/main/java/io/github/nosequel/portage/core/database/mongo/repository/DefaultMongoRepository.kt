@@ -12,6 +12,8 @@ import java.util.stream.Collectors
 
 open class DefaultMongoRepository<T>(private val portageAPI: PortageAPI, private val collection: String, private val clazz: Class<T>) : AsyncMongoRepository<T> {
 
+    override val cache: MutableSet<T> = mutableSetOf()
+
     override fun retrieve(): MutableSet<T> {
         return this.getCollection().find().toMutableList().stream()
             .map { this.portageAPI.gson.fromJson(it.toJson(), clazz) }

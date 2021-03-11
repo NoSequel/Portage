@@ -1,18 +1,11 @@
 package io.github.nosequel.portage.core.profile
 
-import io.github.nosequel.portage.core.PortageConstants
 import io.github.nosequel.portage.core.handler.Handler
 import java.util.Optional
 import java.util.UUID
 import java.util.stream.Stream
 
-class ProfileHandler(private val repository: ProfileRepository) : Handler {
-
-    private val cache: MutableSet<Profile> = mutableSetOf()
-
-    override fun enable() {
-        Profile(PortageConstants.consoleUuid, PortageConstants.consoleName)
-    }
+class ProfileHandler(val repository: ProfileRepository) : Handler {
 
     override fun disable() {
         this.stream().forEach { this.repository.updateAsync(it, it.uuid.toString()) }
@@ -22,7 +15,7 @@ class ProfileHandler(private val repository: ProfileRepository) : Handler {
      * Get the [Stream] object of [MutableSet] of [Profile]s
      */
     fun stream(): Stream<Profile> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
     }
 
     /**
@@ -66,6 +59,6 @@ class ProfileHandler(private val repository: ProfileRepository) : Handler {
             .orElseGet {
                 this.repository.retrieve(uuid.toString())
                     .orElseGet { Profile(uuid, name).also { this.repository.updateAsync(it, it.uuid.toString()) } }
-            }
+            }.also { this.repository.cache.add(it) }
     }
 }

@@ -1,9 +1,9 @@
 package io.github.nosequel.portage.core.punishments
 
-enum class PunishmentType {
+enum class PunishmentType(val simpleName: String) {
 
-    BAN,
-    MUTE,
-    WARNING
+    BAN("banned"),
+    MUTE("muted"),
+    WARNING("warned");
 
 }

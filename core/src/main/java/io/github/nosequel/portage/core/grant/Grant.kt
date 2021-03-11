@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.core.grant
 
-import io.github.nosequel.portage.core.PortageConstants
 import io.github.nosequel.portage.core.expirable.Expirable
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.core.rank.Rank
@@ -12,10 +11,10 @@ class Grant(
     var rankId: String = HandlerManager.instance.findOrThrow(RankHandler::class.java).findDefaultRank().name,
     uuid: UUID = UUID.randomUUID(),
     reason: String = "Unidentified",
-    executor: UUID = PortageConstants.consoleUuid,
+    executor: UUID = UUID.randomUUID(),
     duration: Long = -1L,
     start: Long = System.currentTimeMillis(),
-) : Expirable(uuid, reason, executor, duration, start) {
+) : Expirable(uuid, reason, duration, start, executor) {
 
     /**
      * Find the [Rank] object of the [Grant]

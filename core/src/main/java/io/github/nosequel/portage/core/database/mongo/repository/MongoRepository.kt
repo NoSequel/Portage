@@ -4,6 +4,8 @@ import java.util.Optional
 
 interface MongoRepository<T> {
 
+    val cache: MutableSet<T>
+
     /**
      * Retrieve all elements from a repository
      */

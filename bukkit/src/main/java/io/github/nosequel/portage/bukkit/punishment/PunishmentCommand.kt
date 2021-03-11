@@ -11,6 +11,7 @@ import io.github.nosequel.portage.core.punishments.PunishmentType
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.Optional
 import java.util.UUID
 
@@ -20,45 +21,81 @@ class PunishmentCommand {
         HandlerManager.instance.findOrThrow(PunishmentHandler::class.java)
 
     @Command(label = "ban", permission = "portage.ban")
-    fun ban(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    fun ban(
+        sender: CommandSender,
+        targetName: String,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.BAN)
     }
 
     @Command(label = "tempban", permission = "portage.tempban")
-    fun tempban(sender: CommandSender, targetName: String, duration: Duration, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    fun tempban(
+        sender: CommandSender,
+        targetName: String,
+        duration: Duration,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.BAN)
     }
 
     @Command(label = "unban", permission = "portage.unban")
-    fun unban(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    fun unban(
+        sender: CommandSender,
+        targetName: String,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.BAN)
     }
 
-    @Command(label="mute", permission="portage.mute")
-    fun mute(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    @Command(label = "mute", permission = "portage.mute")
+    fun mute(
+        sender: CommandSender,
+        targetName: String,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.MUTE)
     }
 
     @Command(label = "tempmute", permission = "portage.tempmute")
-    fun tempmute(sender: CommandSender, targetName: String, duration: Duration, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    fun tempmute(
+        sender: CommandSender,
+        targetName: String,
+        duration: Duration,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.MUTE)
     }
 
     @Command(label = "unmute", permission = "portage.unmute")
-    fun unmute(sender: CommandSender, targetName: String, @Parameter(value = "No reason provided", name = "reason") reason: String) {
+    fun unmute(
+        sender: CommandSender,
+        targetName: String,
+        @Parameter(value = "No reason provided", name = "reason") reason: String
+    ) {
         this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.MUTE)
     }
 
     /**
      * Handle the punishment of an [OfflinePlayer]
      */
-    private fun punish(sender: CommandSender, target: OfflinePlayer, reason: String, duration: Duration, type: PunishmentType) {
+    private fun punish(
+        sender: CommandSender,
+        target: OfflinePlayer,
+        reason: String,
+        duration: Duration,
+        type: PunishmentType
+    ) {
         if (target.firstPlayed > 0) {
             this.punishmentHandler.registerPunishment(Punishment(
-                target.uniqueId,
-                type,
-                UUID.randomUUID(),
-                reason,
+                target = target.uniqueId,
+                type = type,
+                reason = reason,
+                uuid = UUID.randomUUID(),
+                executor = if (sender is Player)
+                    sender.uniqueId
+                else
+                    UUID.randomUUID(),
                 duration = duration.duration
             ))
 
@@ -82,7 +119,7 @@ class PunishmentCommand {
                 sender.sendMessage("${ChatColor.RED}That player does not have any active punishments.")
                 return
             } else {
-                punishment.get().expire(reason)
+                this.punishmentHandler.expirePunishment(punishment.get(), reason)
             }
         } else {
             sender.sendMessage("${ChatColor.RED}That player has never played before")

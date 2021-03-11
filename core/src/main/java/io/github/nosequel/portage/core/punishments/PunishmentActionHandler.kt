@@ -9,4 +9,14 @@ interface PunishmentActionHandler {
      */
     fun attemptBan(target: UUID, punishment: Punishment)
 
+    /**
+     * Handle the registration of a [Punishment]
+     */
+    fun registerPunishment(punishment: Punishment)
+
+    /**
+     * Handle the expiration of a [Punishment]
+     */
+    fun expirePunishment(punishment: Punishment)
+
 }

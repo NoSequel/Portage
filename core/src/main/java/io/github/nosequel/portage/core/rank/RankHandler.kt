@@ -7,10 +7,8 @@ import java.util.stream.Stream
 
 class RankHandler(val repository: RankRepository) : Handler {
 
-    val cache: MutableSet<Rank> = mutableSetOf()
-
     override fun enable() {
-        this.repository.retrieveAsync().forEach { this.cache.add(it) }
+        this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
     }
 
     override fun disable() {
@@ -21,8 +19,29 @@ class RankHandler(val repository: RankRepository) : Handler {
      * Get the [Stream] object of [MutableSet] of [Rank]s
      */
     fun stream(): Stream<Rank> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
             .sorted(Comparator.comparingInt { -it.weight })
+    }
+
+    /**
+     * Register a new [Rank] object
+     */
+    fun register(rank: Rank) {
+        this.repository.cache.add(rank)
+        this.repository.updateAsync(rank, rank.name)
+    }
+
+    /**
+     * Delete an existing [Rank] object
+     */
+    fun delete(rank: Rank) {
+        if (!this.repository.cache.remove(rank)) {
+            println("Unable to remove ${rank.name} rank from the cache")
+        }
+
+        if (!this.repository.deleteAsync(rank, rank.name)) {
+            println("Unable to delete ${rank.name} rank from the database}")
+        }
     }
 
     /**
@@ -48,8 +67,8 @@ class RankHandler(val repository: RankRepository) : Handler {
             .findFirst()
             .orElseGet {
                 Rank("Default", Metadata.DEFAULT).also {
-                    this.repository.updateAsync(it,
-                        it.name); this.cache.add(it)
+                    this.repository.updateAsync(it, it.name)
+                    this.repository.cache.add(it)
                 }
             }
     }

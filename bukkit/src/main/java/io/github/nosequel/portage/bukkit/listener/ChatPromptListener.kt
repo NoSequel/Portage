@@ -34,7 +34,9 @@ class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
             val grant: Grant = grantHandler.findMostRelevantGrant(player.uniqueId)
             val rank: Rank = grant.findRank()
 
-            event.format = "${rank.prefix}%s${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}%s"
+            event.format = "${rank.prefix}${player.name}${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}${
+                event.message.replace("%", "$$")
+            }"
         }
     }
 }

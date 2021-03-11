@@ -31,8 +31,7 @@ class RankCommand(portageAPI: PortageAPI) {
         }
 
         Rank(rank).also {
-            this.rankHandler.cache.add(it)
-            this.rankHandler.repository.updateAsync(it, it.name)
+            this.rankHandler.register(it)
 
             player.sendMessage("${ChatColor.YELLOW}You have created the ${it.getDisplayName()}${ChatColor.YELLOW} rank.")
         }
@@ -40,10 +39,8 @@ class RankCommand(portageAPI: PortageAPI) {
 
     @Subcommand(label = "delete", parentLabel = "rank", permission = "portage.rank.delete")
     fun delete(player: Player, rank: Rank) {
-        this.rankHandler.repository.deleteAsync(rank.also {
-            this.rankHandler.cache.remove(it)
-            player.sendMessage("${ChatColor.YELLOW}You have deleted the ${it.getDisplayName()}${ChatColor.YELLOW} rank.")
-        }, rank.name)
+        this.rankHandler.delete(rank)
+        player.sendMessage("${ChatColor.YELLOW}You have deleted the ${rank.getDisplayName()}${ChatColor.YELLOW} rank.")
     }
 
     @Subcommand(label = "editor", parentLabel = "rank", permission = "portage.rank.editor")

@@ -7,10 +7,8 @@ import java.util.stream.Stream
 
 class GrantHandler(val repository: GrantRepository) : Handler {
 
-    val cache: MutableSet<Grant> = mutableSetOf()
-
     override fun enable() {
-        this.repository.retrieveAsync().forEach { this.cache.add(it) }
+        this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
     }
 
     override fun disable() {
@@ -21,7 +19,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * Open a new [Stream] for the cache of grants
      */
     fun stream(): Stream<Grant> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
     }
 
     /**
@@ -33,14 +31,19 @@ class GrantHandler(val repository: GrantRepository) : Handler {
         return findGrantsByTarget(uuid).stream()
             .filter { it.isActive() }
             .findFirst()
-            .orElseGet { Grant(uuid).also { this.cache.add(it); this.repository.updateAsync(it, it.uuid.toString()) } }
+            .orElseGet {
+                Grant(uuid).also {
+                    this.repository.cache.add(it); this.repository.updateAsync(it,
+                    it.uuid.toString())
+                }
+            }
     }
 
     /**
      * Find all the [Grant]s by a [UUID]
      */
     fun findGrantsByTarget(uuid: UUID): Collection<Grant> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
             .filter { it.target == uuid }
             .sorted(Comparator.comparingInt { -it.findRank().weight })
             .collect(Collectors.toList())
@@ -53,12 +56,10 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * @return the grant itself
      */
     fun registerGrant(grant: Grant): Grant? {
-        if (this.stream()
-                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
-        ) {
+        if (this.stream().anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }) {
             return null
         }
 
-        return grant.also { this.cache.add(grant); this.repository.updateAsync(it, it.uuid.toString()) }
+        return grant.also { this.repository.cache.add(grant); this.repository.updateAsync(it, it.uuid.toString()) }
     }
 }

@@ -7,12 +7,10 @@ import java.util.UUID
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
-class PunishmentHandler(val repository: PunishmentRepository, val punishmentActionHandler: PunishmentActionHandler) : Handler {
-
-    val cache: MutableSet<Punishment> = mutableSetOf()
+class PunishmentHandler(val repository: PunishmentRepository, private val actionHandler: PunishmentActionHandler) : Handler {
 
     override fun enable() {
-        this.repository.retrieveAsync().forEach { this.cache.add(it) }
+        this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
     }
 
     override fun disable() {
@@ -23,7 +21,7 @@ class PunishmentHandler(val repository: PunishmentRepository, val punishmentActi
      * Open a new [Stream] for the cache of grants
      */
     fun stream(): Stream<Punishment> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
     }
 
     /**
@@ -39,7 +37,7 @@ class PunishmentHandler(val repository: PunishmentRepository, val punishmentActi
      * Find all the [Grant]s by a [UUID]
      */
     fun findPunishmentByTarget(uuid: UUID): Collection<Punishment> {
-        return this.cache.stream()
+        return this.repository.cache.stream()
             .filter { it.target == uuid }
             .collect(Collectors.toList())
     }
@@ -54,15 +52,35 @@ class PunishmentHandler(val repository: PunishmentRepository, val punishmentActi
     }
 
     /**
+     * Expire a [Punishment]
+     */
+    fun expirePunishment(punishment: Punishment, reason: String): Punishment {
+        return punishment.also {
+            if (!this.repository.cache.contains(punishment)) {
+                this.registerPunishment(punishment)
+            }
+
+            it.expire(reason)
+
+            this.actionHandler.expirePunishment(it)
+            this.repository.updateAsync(it, it.uuid.toString())
+        }
+    }
+
+    /**
      * Register a new [Punishment]
      */
     fun registerPunishment(punishment: Punishment): Punishment {
-        this.findMostRelevantPunishment(punishment.target, punishment.type)
-            .ifPresent { it.expire("Overwrote by different punishment") }
+        this.findMostRelevantPunishment(punishment.target, punishment.type).ifPresent {
+            if (it != punishment) {
+                it.expire("Overwrote by different punishment")
+            }
+        }
 
         return punishment.also {
             this.repository.updateAsync(it, it.uuid.toString())
-            this.cache.add(it)
+            this.repository.cache.add(it)
+            this.actionHandler.registerPunishment(it)
         }
     }
 
@@ -71,6 +89,6 @@ class PunishmentHandler(val repository: PunishmentRepository, val punishmentActi
      */
     fun attemptBan(target: UUID) {
         this.findMostRelevantPunishment(target, PunishmentType.BAN)
-            .ifPresent { this.punishmentActionHandler.attemptBan(target, it) }
+            .ifPresent { this.actionHandler.attemptBan(target, it) }
     }
 }
