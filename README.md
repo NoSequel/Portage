@@ -4,7 +4,7 @@ I currently do not recommend using it in it's current state,
 therefore I won't publish releases for this until further notice.
 
 # Todo
-- We currently do not have any form of synchronization, therefore it should ideally only be used on single-instance servers, we are planning to add this as a feature later on.
+- We currently do not have any form of synchronization, therefore it should ideally only be used on single-instance servers, we are planning to add this as a feature later on. (work in progress)
 - The entire command API requires a recode, the code is terrible and was ported from Java to Kotlin without paying any attention.
 - Possibly add more features, such as essential commands, etc.
 
