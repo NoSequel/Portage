@@ -35,9 +35,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      */
     fun findMostRelevantGrant(uuid: UUID): Grant {
         return findGrantsByTarget(uuid).stream()
-            .filter { it.isActive() }
-            .findFirst()
-            .orElseGet {
+            .filter { it.isActive() }.findFirst().orElseGet {
                 Grant(uuid).also {
                     this.repository.cache.add(it); this.repository.updateAsync(it,
                     it.uuid.toString())
@@ -62,25 +60,28 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * @return the grant itself
      */
     fun registerGrant(grant: Grant): Grant {
-        if(this.stream().anyMatch { it.uuid == grant.uuid }) {
+        if (this.stream().anyMatch { it.uuid == grant.uuid }) {
             return grant
         }
 
-        if (this.stream().anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }) {
+        if (this.stream()
+                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
+        ) {
             return grant
         }
 
-        return grant.also {
-            this.repository.cache.add(grant);
-            this.repository.updateAsync(it, it.uuid.toString())
 
-            this.redis.publish(JsonObject().also { json ->
-                kotlin.run {
-                    json.addProperty("type", RedisGrantType.ADDED.name)
-                    json.addProperty("uuid", grant.uuid.toString())
-                }
-            })
-        }
+        this.repository.cache.add(grant);
+        this.repository.updateAsync(grant, grant.uuid.toString())
+
+        this.redis.publish(JsonObject().also { json ->
+            kotlin.run {
+                json.addProperty("type", RedisGrantType.ADDED.name)
+                json.addProperty("uuid", grant.uuid.toString())
+            }
+        })
+
+        return grant
     }
 
     /**
@@ -91,18 +92,18 @@ class GrantHandler(val repository: GrantRepository) : Handler {
             this.registerGrant(grant)
         }
 
-        return grant.also {
-            it.expirationData = data
-            it.expired = true
+        grant.expirationData = data
+        grant.expired = true
 
-            this.repository.updateAsync(it, it.uuid.toString())
-            this.redis.publish(JsonObject().also { json ->
-                kotlin.run {
-                    json.addProperty("type", RedisGrantType.ACTIVITY.name)
-                    json.addProperty("uuid", it.uuid.toString())
-                    json.addProperty("expired", true)
-                }
-            })
-        }
+        this.repository.updateAsync(grant, grant.uuid.toString())
+        this.redis.publish(JsonObject().also { json ->
+            kotlin.run {
+                json.addProperty("type", RedisGrantType.ACTIVITY.name)
+                json.addProperty("uuid", grant.uuid.toString())
+                json.addProperty("expired", true)
+            }
+        })
+
+        return grant
     }
 }

@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.core.grant.redis
 
 import com.google.gson.JsonObject
+import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.Grant
 import io.github.nosequel.portage.core.grant.GrantHandler
 import java.util.Optional
@@ -34,7 +35,7 @@ enum class RedisGrantType {
                     .findFirst()
 
                 if (grant.isPresent) {
-                    grant.get().expired = json.get("expired").asBoolean
+                    handler.expireGrant(grant.get(), ExpirationData("Synchronized", System.currentTimeMillis()))
                 }
             }
         }

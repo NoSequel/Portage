@@ -3,7 +3,6 @@ package io.github.nosequel.portage.core.punishments
 import com.google.gson.JsonObject
 import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.Grant
-import io.github.nosequel.portage.core.grant.redis.RedisGrantType
 import io.github.nosequel.portage.core.handler.Handler
 import io.github.nosequel.portage.core.punishments.redis.RedisPunishmentRepository
 import io.github.nosequel.portage.core.punishments.redis.RedisPunishmentType
@@ -62,9 +61,7 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
      * Expire a [Punishment]
      */
     fun expirePunishment(punishment: Punishment, reason: String): Punishment {
-        return punishment.also {
-            this.expirePunishment(punishment, ExpirationData(reason, System.currentTimeMillis()))
-        }
+        return this.expirePunishment(punishment, ExpirationData(reason, System.currentTimeMillis()))
     }
 
     /**
@@ -73,35 +70,33 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
     fun expirePunishment(punishment: Punishment, data: ExpirationData): Punishment {
         if (!this.repository.cache.contains(punishment)) {
             this.registerPunishment(punishment)
-        } else if(!punishment.isActive()) {
+        } else if (!punishment.isActive()) {
             return punishment
         }
 
-        return punishment.also {
-            if (!this.repository.cache.contains(punishment)) {
-                this.registerPunishment(punishment)
+        punishment.expirationData = data
+        punishment.expired = true
+
+        this.repository.updateAsync(punishment, punishment.uuid.toString())
+        this.actionHandler.expirePunishment(punishment)
+
+
+        this.redis.publish(JsonObject().also { json ->
+            kotlin.run {
+                json.addProperty("type", RedisPunishmentType.ACTIVITY.name)
+                json.addProperty("uuid", punishment.uuid.toString())
+                json.addProperty("expired", true)
             }
+        })
 
-            it.expirationData = data
-            it.expired = true
-
-            this.repository.updateAsync(it, it.uuid.toString())
-            this.actionHandler.expirePunishment(it)
-            this.redis.publish(JsonObject().also { json ->
-                kotlin.run {
-                    json.addProperty("type", RedisPunishmentType.ACTIVITY.name)
-                    json.addProperty("uuid", it.uuid.toString())
-                    json.addProperty("expired", true)
-                }
-            })
-        }
+        return punishment
     }
 
     /**
      * Register a new [Punishment]
      */
     fun registerPunishment(punishment: Punishment): Punishment {
-        if(this.stream().anyMatch { it.uuid == punishment.uuid }) {
+        if (this.stream().anyMatch { it.uuid == punishment.uuid }) {
             return punishment
         }
 
@@ -111,18 +106,19 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
             }
         }
 
-        return punishment.also {
-            this.repository.updateAsync(it, it.uuid.toString())
-            this.repository.cache.add(it)
-            this.redis.publishAsync(JsonObject().also { json ->
-                kotlin.run {
-                    json.addProperty("type", RedisPunishmentType.ADDED.name)
-                    json.addProperty("uuid", it.uuid.toString())
-                }
-            })
+        this.repository.updateAsync(punishment, punishment.uuid.toString())
+        this.repository.cache.add(punishment)
 
-            this.actionHandler.registerPunishment(it)
-        }
+        this.redis.publishAsync(JsonObject().also { json ->
+            kotlin.run {
+                json.addProperty("type", RedisPunishmentType.ADDED.name)
+                json.addProperty("uuid", punishment.uuid.toString())
+            }
+        })
+
+        this.actionHandler.registerPunishment(punishment)
+
+        return punishment
     }
 
     /**
