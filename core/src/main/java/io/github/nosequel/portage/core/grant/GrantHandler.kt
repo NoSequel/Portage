@@ -1,11 +1,16 @@
 package io.github.nosequel.portage.core.grant
 
+import com.google.gson.JsonObject
+import io.github.nosequel.portage.core.grant.redis.RedisGrantRepository
+import io.github.nosequel.portage.core.grant.redis.RedisGrantType
 import io.github.nosequel.portage.core.handler.Handler
 import java.util.UUID
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 class GrantHandler(val repository: GrantRepository) : Handler {
+
+    private val redis: RedisGrantRepository = RedisGrantRepository(repository.portageAPI, this)
 
     override fun enable() {
         this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
@@ -56,10 +61,22 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * @return the grant itself
      */
     fun registerGrant(grant: Grant): Grant? {
-        if (this.stream().anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }) {
+        if (this.stream()
+                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
+        ) {
             return null
         }
 
-        return grant.also { this.repository.cache.add(grant); this.repository.updateAsync(it, it.uuid.toString()) }
+        return grant.also {
+            this.repository.cache.add(grant);
+            this.repository.updateAsync(it, it.uuid.toString())
+
+            this.redis.publish(JsonObject().also { json ->
+                run {
+                    json.addProperty("type", RedisGrantType.ADDED.name)
+                    json.addProperty("uuid", grant.uuid.toString())
+                }
+            })
+        }
     }
 }
