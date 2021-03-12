@@ -41,5 +41,4 @@ enum class RedisGrantType {
     };
 
     abstract fun handle(json: JsonObject, handler: GrantHandler)
-
 }

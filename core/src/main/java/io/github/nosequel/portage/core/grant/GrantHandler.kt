@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.core.grant
 
 import com.google.gson.JsonObject
+import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.redis.RedisGrantRepository
 import io.github.nosequel.portage.core.grant.redis.RedisGrantType
 import io.github.nosequel.portage.core.handler.Handler
@@ -60,11 +61,13 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      *
      * @return the grant itself
      */
-    fun registerGrant(grant: Grant): Grant? {
-        if (this.stream()
-                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
-        ) {
-            return null
+    fun registerGrant(grant: Grant): Grant {
+        if(this.stream().anyMatch { it.uuid == grant.uuid }) {
+            return grant
+        }
+
+        if (this.stream().anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }) {
+            return grant
         }
 
         return grant.also {
@@ -72,9 +75,32 @@ class GrantHandler(val repository: GrantRepository) : Handler {
             this.repository.updateAsync(it, it.uuid.toString())
 
             this.redis.publish(JsonObject().also { json ->
-                run {
+                kotlin.run {
                     json.addProperty("type", RedisGrantType.ADDED.name)
                     json.addProperty("uuid", grant.uuid.toString())
+                }
+            })
+        }
+    }
+
+    /**
+     * Expire an already existing [Grant] object
+     */
+    fun expireGrant(grant: Grant, data: ExpirationData): Grant {
+        if (!this.repository.cache.contains(grant)) {
+            this.registerGrant(grant)
+        }
+
+        return grant.also {
+            it.expirationData = data
+            it.expired = true
+
+            this.repository.updateAsync(it, it.uuid.toString())
+            this.redis.publish(JsonObject().also { json ->
+                kotlin.run {
+                    json.addProperty("type", RedisGrantType.ACTIVITY.name)
+                    json.addProperty("uuid", it.uuid.toString())
+                    json.addProperty("expired", true)
                 }
             })
         }

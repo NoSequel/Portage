@@ -2,7 +2,10 @@ package io.github.nosequel.portage.bukkit.grant.menu.element
 
 import io.github.nosequel.menus.button.ButtonBuilder
 import io.github.nosequel.menus.menu.Menu
+import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.Grant
+import io.github.nosequel.portage.core.grant.GrantHandler
+import io.github.nosequel.portage.core.handler.HandlerManager
 import org.apache.commons.lang.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -38,7 +41,7 @@ class GrantInfoElement(index: Int, val grant: Grant, menu: Menu) : ButtonBuilder
 
         this.action {
             if (grant.isActive()) {
-                grant.expire("Unspecified")
+                HandlerManager.instance.findOrThrow(GrantHandler::class.java).expireGrant(grant, ExpirationData("Unspecified", System.currentTimeMillis()))
             } else {
                 grant.expired = false
                 grant.expirationData = null

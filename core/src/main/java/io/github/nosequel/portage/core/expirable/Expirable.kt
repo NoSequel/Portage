@@ -15,17 +15,10 @@ abstract class Expirable(@SerializedName("_id") val uuid: UUID, val reason: Stri
      */
     open fun isActive(): Boolean {
         if (this.duration != -1L && this.duration - System.currentTimeMillis() <= 0) {
-            this.expire("Expired")
+            this.expired = true
+            this.expirationData = ExpirationData("Expired", System.currentTimeMillis())
         }
 
         return !this.expired
-    }
-
-    /**
-     * Expire a [Expirable] object
-     */
-    fun expire(reason: String) {
-        this.expirationData = ExpirationData(reason, System.currentTimeMillis())
-        this.expired = true
     }
 }
