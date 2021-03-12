@@ -32,12 +32,10 @@ class RankMetadataToggleElement(index: Int, private val metadata: Metadata, val 
     }
 
     override fun toItemStack(): ItemStack {
-        val itemStack: ItemStack = super.toItemStack()
-
-        if (rank.hasMetadata(metadata)) {
-            itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 10)
+        return super.toItemStack().clone().also {
+            if (rank.hasMetadata(metadata)) {
+                it.addUnsafeEnchantment(Enchantment.DURABILITY, 10)
+            }
         }
-
-        return itemStack
     }
 }

@@ -35,16 +35,17 @@ class RankPermissionMenu(player: Player, val rank: Rank) : PaginatedMenu(player,
                 }
         )
 
+
+        for (i in 9..17) {
+            buttons.add(this.getEmptyButton().index(i))
+        }
+
         return buttons
     }
 
     override fun getButtons(): MutableList<Button> {
         val buttons: MutableList<Button> = mutableListOf()
         val index = AtomicInteger(9)
-
-        for (i in 0..8) {
-            buttons.add(this.getEmptyButton().index(i))
-        }
 
         rank.permissions.stream()
             .map { RankPermissionElement(index.getAndIncrement(), rank, it, this) }

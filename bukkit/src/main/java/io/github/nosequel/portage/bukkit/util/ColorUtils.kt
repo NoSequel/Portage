@@ -3,6 +3,7 @@ package io.github.nosequel.portage.bukkit.util
 import io.github.nosequel.portage.core.rank.Rank
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
+import java.util.Optional
 
 class ColorUtils {
 
@@ -28,7 +29,11 @@ class ColorUtils {
 
         @JvmStatic
         fun getRankColor(rank: Rank): ChatColor {
-            return ChatColor.getByChar(rank.color.replace("&", "").replace("§", "").toCharArray()[0])
+            val char = rank.color.replace("&", "").replace("§", "").toCharArray()[0]
+
+            return ChatColor.values().asList().stream()
+                .filter { it.char == char }
+                .findFirst().orElseGet { ChatColor.WHITE }
         }
     }
 }

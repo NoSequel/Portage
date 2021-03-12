@@ -119,7 +119,14 @@ enum class RankEditorType(val displayName: String, val material: Material) {
 
     val promptHandler: ChatPromptHandler = HandlerManager.instance.findOrThrow(ChatPromptHandler::class.java)
 
+    /**
+     * Get the lore for a specific [Rank]
+     */
     abstract fun getLore(rank: Rank): Array<String>
+
+    /**
+     * Get the action to execute on interaction with the button
+     */
     abstract fun getAction(rank: Rank, clickType: ClickType, menu: Menu): Consumer<Player>
 
 }
