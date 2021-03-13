@@ -14,13 +14,13 @@ import io.github.nosequel.portage.core.profile.ProfileRepository
 import io.github.nosequel.portage.core.rank.RankHandler
 import io.github.nosequel.portage.core.rank.RankRepository
 
-class PortageAPI(val handler: HandlerManager) {
+class PortageAPI(val handler: HandlerManager, databaseHandler: DatabaseHandler) {
 
     val gson: Gson = GsonBuilder()
         .setLongSerializationPolicy(LongSerializationPolicy.STRING).setPrettyPrinting().create()
 
     init {
-        this.handler.register(DatabaseHandler(this, MongoHandler("127.0.0.1", 27017, "portage"), RedisHandler("127.0.0.1", 6379)))
+        this.handler.register(databaseHandler)
 
         this.handler.register(RankHandler(RankRepository(this)))
         this.handler.register(ProfileHandler(ProfileRepository(this)))

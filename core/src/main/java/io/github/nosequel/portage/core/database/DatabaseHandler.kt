@@ -4,12 +4,13 @@ import io.github.nosequel.portage.core.PortageAPI
 import io.github.nosequel.portage.core.database.mongo.MongoHandler
 import io.github.nosequel.portage.core.database.redis.RedisHandler
 import io.github.nosequel.portage.core.handler.Handler
+import io.github.nosequel.portage.core.handler.HandlerManager
 
-class DatabaseHandler(portageAPI: PortageAPI, val mongo: MongoHandler, val redis: RedisHandler) : Handler {
+class DatabaseHandler(handler: HandlerManager, val mongo: MongoHandler, val redis: RedisHandler) : Handler {
 
     init {
-        portageAPI.handler.register(mongo)
-        portageAPI.handler.register(redis)
+        handler.register(mongo)
+        handler.register(redis)
     }
 
 }

@@ -4,14 +4,15 @@ import io.github.nosequel.portage.bukkit.rank.menu.RankMenu
 import io.github.nosequel.portage.bukkit.util.command.annotation.Command
 import io.github.nosequel.portage.bukkit.util.command.annotation.Subcommand
 import io.github.nosequel.portage.core.PortageAPI
+import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.core.rank.Rank
 import io.github.nosequel.portage.core.rank.RankHandler
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
-class RankCommand(portageAPI: PortageAPI) {
+class RankCommand(handler: HandlerManager) {
 
-    private val rankHandler: RankHandler = portageAPI.handler.findOrThrow(RankHandler::class.java)
+    private val rankHandler: RankHandler = handler.findOrThrow(RankHandler::class.java)
 
     @Command(label = "rank", permission = "portage.rank")
     fun rank(player: Player) {
