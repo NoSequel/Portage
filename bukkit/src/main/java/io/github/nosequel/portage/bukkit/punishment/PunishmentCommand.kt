@@ -24,7 +24,7 @@ class PunishmentCommand {
     fun ban(
         sender: CommandSender,
         targetName: String,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.BAN)
     }
@@ -34,7 +34,7 @@ class PunishmentCommand {
         sender: CommandSender,
         targetName: String,
         duration: Duration,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.BAN)
     }
@@ -43,7 +43,7 @@ class PunishmentCommand {
     fun unban(
         sender: CommandSender,
         targetName: String,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.BAN)
     }
@@ -52,7 +52,7 @@ class PunishmentCommand {
     fun mute(
         sender: CommandSender,
         targetName: String,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, Duration(-1L), PunishmentType.MUTE)
     }
@@ -62,7 +62,7 @@ class PunishmentCommand {
         sender: CommandSender,
         targetName: String,
         duration: Duration,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.punish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, duration, PunishmentType.MUTE)
     }
@@ -71,7 +71,7 @@ class PunishmentCommand {
     fun unmute(
         sender: CommandSender,
         targetName: String,
-        @Parameter(value = "No reason provided", name = "reason") reason: String
+        @Parameter(name = "reason") reason: Array<String>
     ) {
         this.unpunish(sender, UUIDFetcher.getOfflinePlayer(targetName), reason, PunishmentType.MUTE)
     }
@@ -82,7 +82,7 @@ class PunishmentCommand {
     private fun punish(
         sender: CommandSender,
         target: OfflinePlayer,
-        reason: String,
+        reason: Array<String>,
         duration: Duration,
         type: PunishmentType
     ) {
@@ -90,7 +90,7 @@ class PunishmentCommand {
             this.punishmentHandler.registerPunishment(Punishment(
                 target = target.uniqueId,
                 type = type,
-                reason = reason,
+                reason = reason.joinToString(" "),
                 uuid = UUID.randomUUID(),
                 executor = if (sender is Player)
                     sender.uniqueId
@@ -110,7 +110,7 @@ class PunishmentCommand {
     /**
      * Handle the unpunishment of an [OfflinePlayer]
      */
-    private fun unpunish(sender: CommandSender, target: OfflinePlayer, reason: String, type: PunishmentType) {
+    private fun unpunish(sender: CommandSender, target: OfflinePlayer, reason: Array<String>, type: PunishmentType) {
         if (target.firstPlayed > 0) {
             val punishment: Optional<Punishment> =
                 this.punishmentHandler.findMostRelevantPunishment(target.uniqueId, type)
@@ -119,7 +119,7 @@ class PunishmentCommand {
                 sender.sendMessage("${ChatColor.RED}That player does not have any active punishments.")
                 return
             } else {
-                this.punishmentHandler.expirePunishment(punishment.get(), reason)
+                this.punishmentHandler.expirePunishment(punishment.get(), reason.joinToString(" "))
             }
         } else {
             sender.sendMessage("${ChatColor.RED}That player has never played before")

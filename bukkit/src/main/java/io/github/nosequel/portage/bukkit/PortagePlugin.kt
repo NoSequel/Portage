@@ -91,7 +91,6 @@ class PortagePlugin : JavaPlugin() {
             )
         }
 
-
         return DatabaseHandler(handler, mongo, redis);
     }
 }
