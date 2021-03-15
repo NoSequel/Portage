@@ -24,16 +24,12 @@ import org.bukkit.plugin.java.JavaPlugin
 class PortagePlugin : JavaPlugin() {
 
     private val handler: HandlerManager = HandlerManager()
-    private val portageAPI: PortageAPI = PortageAPI(handler, DatabaseHandler(
-        handler,
-        MongoHandler("127.0.0.1", 27017, "portage"),
-        RedisHandler("127.0.0.1", 6379)
-    ))
+    private val portageAPI: PortageAPI = PortageAPI(handler, this.createDatabaseHandler())
 
     override fun onEnable() {
-        this.handler.register(PunishmentHandler(PunishmentRepository(this.portageAPI),
-            BukkitPunishmentActionHandler()).also { it.enable() })
+        this.saveDefaultConfig()
 
+        this.handler.register(PunishmentHandler(PunishmentRepository(this.portageAPI), BukkitPunishmentActionHandler()).also { it.enable() })
         this.handler.register(ChatPromptHandler().also { it.enable() })
 
         arrayOf(
@@ -60,5 +56,42 @@ class PortagePlugin : JavaPlugin() {
 
     override fun onDisable() {
         this.portageAPI.disable()
+    }
+
+    /**
+     * Create a new [DatabaseHandler] object
+     */
+    private fun createDatabaseHandler(): DatabaseHandler {
+        val mongo: MongoHandler = if (this.config.getBoolean("mongo.auth.enabled")) {
+            MongoHandler(
+                this.config.getString("mongo.hostname"),
+                this.config.getInt("mongo.port"),
+                this.config.getString("mongo.database")
+            )
+        } else {
+            MongoHandler(
+                this.config.getString("mongo.hostname"),
+                this.config.getInt("mongo.port"),
+                this.config.getString("mongo.database"),
+                this.config.getString("mongo.auth.username"),
+                this.config.getString("mongo.auth.password")
+            )
+        }
+
+        val redis: RedisHandler = if (this.config.getBoolean("redis.auth.enabled")) {
+            RedisHandler(
+                this.config.getString("redis.hostname"),
+                this.config.getInt("redis.port")
+            )
+        } else {
+            RedisHandler(
+                this.config.getString("redis.hostname"),
+                this.config.getInt("redis.port"),
+                this.config.getString("redis.auth.password")
+            )
+        }
+
+
+        return DatabaseHandler(handler, mongo, redis);
     }
 }

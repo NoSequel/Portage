@@ -1,0 +1,17 @@
+# This is the main configuration for the Bukkit module for Portage
+# Most, if not all, messages are hardcoded, this file is mostly for important fields.
+
+mongo:
+  hostname: "127.0.0.1"
+  port: 27017
+  database: "portage"
+  auth:
+    enabled: false
+    password: ""
+    username: ""
+redis:
+  hostname: "127.0.0.1"
+  port: 6379
+  auth:
+    enabled: false
+    password: ""

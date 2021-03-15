@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.bukkit.punishment.action
 
-import io.github.nosequel.portage.bukkit.util.UUIDFetcher
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.core.profile.Profile
 import io.github.nosequel.portage.core.profile.ProfileHandler
@@ -9,7 +8,6 @@ import io.github.nosequel.portage.core.punishments.PunishmentActionHandler
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.OfflinePlayer
 import java.util.Optional
 import java.util.UUID
 

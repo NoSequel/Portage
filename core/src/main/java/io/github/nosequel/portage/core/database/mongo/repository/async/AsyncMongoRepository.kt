@@ -8,12 +8,15 @@ import java.util.Optional
 interface AsyncMongoRepository<T> : MongoRepository<T> {
 
     /**
-     * Retrieve an object from the repository using coroutines
+     * Retrieve all objects from the repository using coroutines
      */
     fun retrieveAsync(): MutableSet<T> = runBlocking(Dispatchers.IO) {
         return@runBlocking this@AsyncMongoRepository.retrieve()
     }
 
+    /**
+     * Retrieve an object from the repository using coroutines
+     */
     fun retrieveAsync(id: String): Optional<T> = runBlocking(Dispatchers.IO) {
         return@runBlocking this@AsyncMongoRepository.retrieve(id)
     }
