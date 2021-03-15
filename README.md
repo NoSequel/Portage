@@ -1,6 +1,6 @@
 # Portage
 Portage is a multi-purpose, extensible network, optimized core written in Kotlin. 
-I currently do not recommend using it in it's current state, 
+I currently do not recommend using it in its current state, 
 therefore I won't publish releases for this until further notice.
 
 # Todo
