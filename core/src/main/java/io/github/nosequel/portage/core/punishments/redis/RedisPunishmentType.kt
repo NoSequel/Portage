@@ -22,6 +22,13 @@ enum class RedisPunishmentType {
                 }
             }
         }
+
+        override fun toJson(punishment: Punishment): JsonObject {
+            return JsonObject().also {
+                it.addProperty("type", name)
+                it.addProperty("uuid", punishment.uuid.toString())
+            }
+        }
     },
 
     ACTIVITY {
@@ -42,8 +49,16 @@ enum class RedisPunishmentType {
                 }
             }
         }
+
+        override fun toJson(punishment: Punishment): JsonObject {
+            return JsonObject().also {
+                it.addProperty("type", name)
+                it.addProperty("uuid", punishment.uuid.toString())
+                it.addProperty("expired", punishment.expired)
+            }
+        }
     };
 
     abstract fun handle(json: JsonObject, handler: PunishmentHandler)
-
+    abstract fun toJson(punishment: Punishment): JsonObject
 }

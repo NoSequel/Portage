@@ -23,6 +23,13 @@ enum class RedisGrantType {
                 }
             }
         }
+
+        override fun toJson(grant: Grant): JsonObject {
+            return JsonObject().also {
+                it.addProperty("type", name)
+                it.addProperty("uuid", grant.uuid.toString())
+            }
+        }
     },
 
     ACTIVITY {
@@ -39,7 +46,16 @@ enum class RedisGrantType {
                 }
             }
         }
+
+        override fun toJson(grant: Grant): JsonObject {
+            return JsonObject().also {
+                it.addProperty("type", name)
+                it.addProperty("uuid", grant.uuid.toString())
+                it.addProperty("expired", grant.expired)
+            }
+        }
     };
 
     abstract fun handle(json: JsonObject, handler: GrantHandler)
+    abstract fun toJson(grant: Grant): JsonObject
 }

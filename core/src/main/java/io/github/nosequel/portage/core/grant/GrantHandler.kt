@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.core.grant
 
-import com.google.gson.JsonObject
 import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.redis.RedisGrantRepository
 import io.github.nosequel.portage.core.grant.redis.RedisGrantType
@@ -74,12 +73,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
         this.repository.cache.add(grant);
         this.repository.updateAsync(grant, grant.uuid.toString())
 
-        this.redis.publish(JsonObject().also { json ->
-            kotlin.run {
-                json.addProperty("type", RedisGrantType.ADDED.name)
-                json.addProperty("uuid", grant.uuid.toString())
-            }
-        })
+        this.redis.publish(RedisGrantType.ADDED.toJson(grant))
 
         return grant
     }
@@ -96,13 +90,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
         grant.expired = true
 
         this.repository.updateAsync(grant, grant.uuid.toString())
-        this.redis.publish(JsonObject().also { json ->
-            kotlin.run {
-                json.addProperty("type", RedisGrantType.ACTIVITY.name)
-                json.addProperty("uuid", grant.uuid.toString())
-                json.addProperty("expired", true)
-            }
-        })
+        this.redis.publish(RedisGrantType.ACTIVITY.toJson(grant))
 
         return grant
     }

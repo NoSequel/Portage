@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.core.punishments
 
-import com.google.gson.JsonObject
 import io.github.nosequel.portage.core.expirable.ExpirationData
 import io.github.nosequel.portage.core.grant.Grant
 import io.github.nosequel.portage.core.handler.Handler
@@ -81,13 +80,7 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
         this.actionHandler.expirePunishment(punishment)
 
 
-        this.redis.publish(JsonObject().also { json ->
-            kotlin.run {
-                json.addProperty("type", RedisPunishmentType.ACTIVITY.name)
-                json.addProperty("uuid", punishment.uuid.toString())
-                json.addProperty("expired", true)
-            }
-        })
+        this.redis.publish(RedisPunishmentType.ACTIVITY.toJson(punishment))
 
         return punishment
     }
@@ -108,15 +101,9 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
 
         this.repository.updateAsync(punishment, punishment.uuid.toString())
         this.repository.cache.add(punishment)
-
-        this.redis.publishAsync(JsonObject().also { json ->
-            kotlin.run {
-                json.addProperty("type", RedisPunishmentType.ADDED.name)
-                json.addProperty("uuid", punishment.uuid.toString())
-            }
-        })
-
         this.actionHandler.registerPunishment(punishment)
+
+        this.redis.publishAsync(RedisPunishmentType.ADDED.toJson(punishment))
 
         return punishment
     }

@@ -63,9 +63,8 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
                     parameter.getAnnotation(io.github.nosequel.portage.bukkit.util.command.annotation.Parameter::class.java)
 
                 if (i >= args.size && (param == null || param.value.isEmpty() || param.value == "")) {
-                    sender.sendMessage("${ChatColor.RED}Usage: /$label ${
-                        Arrays.stream(parameters).map { "<${it.name}>" }.collect(Collectors.joining(" "))
-                    }")
+                    sender.sendMessage("${ChatColor.RED}Usage: /$label " + Arrays.stream(parameters)
+                        .map { "<${it.name}>" }.collect(Collectors.joining(" ")))
                     return true
                 }
 
