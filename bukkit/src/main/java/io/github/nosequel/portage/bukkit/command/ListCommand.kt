@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.bukkit.command
 
 import io.github.nosequel.portage.bukkit.util.command.annotation.Command
+import io.github.nosequel.portage.bukkit.util.command.annotation.Subcommand
 import io.github.nosequel.portage.core.grant.GrantHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.core.rank.RankHandler
@@ -17,8 +18,21 @@ class ListCommand {
 
     @Command(label = "list")
     fun list(sender: CommandSender) {
-        this.send(sender, sender.hasPermission("portage.staff"))
+        val hiddenRanks =
+            this.rankHandler.stream().filter { it.hasMetadata(Metadata.HIDDEN) }.collect(Collectors.toList())
+
+        if (hiddenRanks.isNotEmpty() && sender.hasPermission("portage.staff")) {
+            sender.sendMessage("${ChatColor.YELLOW}There are ${hiddenRanks.size} hidden ranks, do /list all to view them.")
+        }
+
+        this.send(sender, false)
     }
+
+    @Subcommand(label = "all", parentLabel = "list", permission = "portage.staff")
+    fun listAll(sender: CommandSender) {
+        this.send(sender, true)
+    }
+
 
     private fun send(sender: CommandSender, hidden: Boolean) {
         sender.sendMessage(this.rankHandler.stream()
