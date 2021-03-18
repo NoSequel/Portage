@@ -61,7 +61,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
         if (this.stream()
                 .noneMatch { it.uuid == grant.uuid && it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
         ) {
-            this.repository.cache.add(grant);
+            this.repository.cache.add(grant)
             this.repository.updateAsync(grant, grant.uuid.toString())
 
             this.redis.publish(RedisGrantType.ADDED.toJson(grant))

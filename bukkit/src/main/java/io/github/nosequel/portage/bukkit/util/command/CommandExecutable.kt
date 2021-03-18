@@ -11,7 +11,6 @@ import org.bukkit.entity.Player
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.Arrays
-import java.util.Objects
 import java.util.Optional
 import java.util.stream.Collectors
 
@@ -30,7 +29,7 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
         val args: Array<String>
         val method: Method
         val permission: String
-        val subcommand = this.findSubcommand(data.command, passedParameters)
+        val subcommand = this.findSubcommand(passedParameters)
 
         if (passedParameters.isNotEmpty() && data.subcommands.isNotEmpty() && subcommand.isPresent) {
             args = passedParameters.copyOfRange(1, passedParameters.size)
@@ -43,7 +42,7 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
         }
 
         if (permission.isNotEmpty() && !sender.hasPermission(permission)) {
-            sender.sendMessage("${ChatColor.RED}No permission.")
+            sender.sendMessage("${ChatColor.RED}xNo permission.")
             return false
         }
 
@@ -64,7 +63,7 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
 
                 if (i >= args.size && (param == null || param.value.isEmpty() || param.value == "")) {
                     sender.sendMessage("${ChatColor.RED}Usage: /$label " + Arrays.stream(parameters)
-                        .map { "<${it.name}>" }.collect(Collectors.joining(" ")))
+                        .map { "<${it.type.simpleName.toLowerCase()}>" }.collect(Collectors.joining(" ")))
                     return true
                 }
 
@@ -107,7 +106,11 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
     /**
      * Find a [SubcommandData] object from a [Command]
      */
-    private fun findSubcommand(command: io.github.nosequel.portage.bukkit.util.command.annotation.Command, parameters: Array<String>): Optional<SubcommandData> {
+    private fun findSubcommand(parameters: Array<String>): Optional<SubcommandData> {
+        if(parameters.isEmpty()) {
+            return Optional.empty()
+        }
+
         return data.subcommands.stream()
             .filter { subcommand ->
                 subcommand.subcommand.label.equals(parameters[0], true)
