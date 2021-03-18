@@ -23,7 +23,8 @@ class ProfileListener : Listener {
         val profile: Profile = try {
             profileHandler.load(player.uniqueId, player.name)
         } catch (exception: Exception) {
-            player.kickPlayer(exception.stackTraceToString()); throw exception
+            player.kickPlayer(exception.stackTraceToString())
+            throw exception
         }
 
         println("Successfully loaded profile with uniqueId ${profile.uuid}")

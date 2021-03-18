@@ -15,11 +15,6 @@ class Grant(val target: UUID, var rankId: String = HandlerManager.instance.findO
      */
     fun findRank(): Rank {
         val rankHandler: RankHandler = HandlerManager.instance.findOrThrow(RankHandler::class.java)
-
-        return rankHandler.find(this.rankId)
-            .orElseGet {
-                rankHandler.findDefaultRank()
-                    .also { this.rankId = it.name }
-            }
+        return rankHandler.find(this.rankId).orElseGet { rankHandler.findDefaultRank().also { this.rankId = it.name } }
     }
 }

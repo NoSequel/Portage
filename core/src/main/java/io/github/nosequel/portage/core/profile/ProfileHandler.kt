@@ -8,7 +8,9 @@ import java.util.stream.Stream
 class ProfileHandler(val repository: ProfileRepository) : Handler {
 
     override fun disable() {
-        this.stream().forEach { this.repository.updateAsync(it, it.uuid.toString()) }
+        this.stream().forEach {
+            this.repository.updateAsync(it, it.uuid.toString())
+        }
     }
 
     /**

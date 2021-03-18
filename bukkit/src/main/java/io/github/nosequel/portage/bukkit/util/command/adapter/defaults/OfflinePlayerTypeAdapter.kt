@@ -14,6 +14,7 @@ class OfflinePlayerTypeAdapter : TypeAdapter<OfflinePlayer> {
         if (source.equals("@SELF", ignoreCase = true)) {
             return sender as Player
         }
+
         return if (Bukkit.getOfflinePlayer(source) == null) Bukkit.getOfflinePlayer(UUID.fromString(source))
         else Bukkit.getOfflinePlayer(source)
     }

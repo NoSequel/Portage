@@ -29,10 +29,8 @@ class ListCommand {
 
         sender.sendMessage("${ChatColor.WHITE}(${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}) ${
             Bukkit.getOnlinePlayers().stream()
-                .sorted(Comparator.comparingInt {
-                    -this.grantHandler.findMostRelevantGrant(it.uniqueId).findRank().weight
-                })
-                .map { grantHandler.findMostRelevantGrant(it.uniqueId).findRank().color + it.name + ChatColor.WHITE }
+                .sorted(Comparator.comparingInt { -this.grantHandler.findGrant(it.uniqueId).findRank().weight })
+                .map { grantHandler.findGrant(it.uniqueId).findRank().color + it.name + ChatColor.WHITE }
                 .toArray { arrayOfNulls<String>(Bukkit.getOnlinePlayers().size) }.asList()
         }")
     }

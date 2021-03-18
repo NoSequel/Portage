@@ -41,8 +41,10 @@ enum class RedisGrantType {
                     .filter { it.uuid == uuid }
                     .findFirst()
 
-                if (grant.isPresent) {
+                if (grant.isPresent && grant.get().expired) {
                     handler.expireGrant(grant.get(), ExpirationData("Synchronized", System.currentTimeMillis()))
+                } else if(grant.isPresent && !grant.get().expired) {
+                    handler.unexpireGrant(grant.get())
                 }
             }
         }

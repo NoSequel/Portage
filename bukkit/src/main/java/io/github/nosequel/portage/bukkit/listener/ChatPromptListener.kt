@@ -31,7 +31,7 @@ class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
                     }
             }
         } else {
-            val grant: Grant = grantHandler.findMostRelevantGrant(player.uniqueId)
+            val grant: Grant = grantHandler.findGrant(player.uniqueId)
             val rank: Rank = grant.findRank()
 
             event.format = "${rank.prefix}${player.name}${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}${

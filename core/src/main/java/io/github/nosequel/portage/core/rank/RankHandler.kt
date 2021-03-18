@@ -67,8 +67,7 @@ class RankHandler(val repository: RankRepository) : Handler {
             .findFirst()
             .orElseGet {
                 Rank("Default", Metadata.DEFAULT).also {
-                    this.repository.updateAsync(it, it.name)
-                    this.repository.cache.add(it)
+                    this.register(it)
                 }
             }
     }

@@ -21,11 +21,9 @@ open class DefaultMongoRepository<T>(private val portageAPI: PortageAPI, private
     }
 
     override fun update(value: T, id: String): Boolean {
-        return this.getCollection().updateOne(
-            Filters.eq("_id", id),
+        return this.getCollection().updateOne(Filters.eq("_id", id),
             Document("\$set", Document.parse(this.portageAPI.gson.toJson(value))),
-            UpdateOptions().upsert(true)
-        ).wasAcknowledged()
+            UpdateOptions().upsert(true)).wasAcknowledged()
     }
 
     override fun delete(value: T, id: String): Boolean {
@@ -38,12 +36,7 @@ open class DefaultMongoRepository<T>(private val portageAPI: PortageAPI, private
         return if (document == null) {
             Optional.empty()
         } else {
-            Optional.of(
-                this.portageAPI.gson.fromJson(
-                    document.toJson(),
-                    this.clazz
-                )
-            )
+            Optional.of(this.portageAPI.gson.fromJson(document.toJson(), this.clazz))
         }
     }
 

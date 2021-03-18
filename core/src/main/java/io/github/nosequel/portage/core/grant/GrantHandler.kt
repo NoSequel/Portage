@@ -13,11 +13,15 @@ class GrantHandler(val repository: GrantRepository) : Handler {
     private val redis: RedisGrantRepository = RedisGrantRepository(repository.portageAPI, this)
 
     override fun enable() {
-        this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
+        this.repository.retrieveAsync().forEach {
+            this.repository.cache.add(it)
+        }
     }
 
     override fun disable() {
-        this.stream().forEach { this.repository.updateAsync(it, it.uuid.toString()) }
+        this.stream().forEach {
+            this.repository.updateAsync(it, it.uuid.toString())
+        }
     }
 
     /**
@@ -32,14 +36,10 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      *
      * @return the grant
      */
-    fun findMostRelevantGrant(uuid: UUID): Grant {
+    fun findGrant(uuid: UUID): Grant {
         return findGrantsByTarget(uuid).stream()
-            .filter { it.isActive() }.findFirst().orElseGet {
-                Grant(uuid).also {
-                    this.repository.cache.add(it); this.repository.updateAsync(it,
-                    it.uuid.toString())
-                }
-            }
+            .filter { it.isActive() }
+            .findFirst().orElseGet { this.registerGrant(Grant(uuid)) }
     }
 
     /**
@@ -47,8 +47,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      */
     fun findGrantsByTarget(uuid: UUID): Collection<Grant> {
         return this.repository.cache.stream()
-            .filter { it.target == uuid }
-            .sorted(Comparator.comparingInt { -it.findRank().weight })
+            .filter { it.target == uuid }.sorted(Comparator.comparingInt { -it.findRank().weight })
             .collect(Collectors.toList())
     }
 
@@ -59,21 +58,14 @@ class GrantHandler(val repository: GrantRepository) : Handler {
      * @return the grant itself
      */
     fun registerGrant(grant: Grant): Grant {
-        if (this.stream().anyMatch { it.uuid == grant.uuid }) {
-            return grant
-        }
-
         if (this.stream()
-                .anyMatch { it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
+                .noneMatch { it.uuid == grant.uuid && it.target == grant.target && it.rankId == grant.rankId && grant.duration == it.duration }
         ) {
-            return grant
+            this.repository.cache.add(grant);
+            this.repository.updateAsync(grant, grant.uuid.toString())
+
+            this.redis.publish(RedisGrantType.ADDED.toJson(grant))
         }
-
-
-        this.repository.cache.add(grant);
-        this.repository.updateAsync(grant, grant.uuid.toString())
-
-        this.redis.publish(RedisGrantType.ADDED.toJson(grant))
 
         return grant
     }
@@ -94,4 +86,22 @@ class GrantHandler(val repository: GrantRepository) : Handler {
 
         return grant
     }
+
+    /**
+     * Un-expire an already existing [Grant] object
+     */
+    fun unexpireGrant(grant: Grant): Grant {
+        if (!this.repository.cache.contains(grant)) {
+            this.registerGrant(grant)
+        }
+
+        grant.expirationData = null
+        grant.expired = false
+
+        this.repository.updateAsync(grant, grant.uuid.toString())
+        this.redis.publishAsync(RedisGrantType.ACTIVITY.toJson(grant))
+
+        return grant
+    }
+
 }

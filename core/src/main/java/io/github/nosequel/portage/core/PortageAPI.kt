@@ -26,10 +26,14 @@ class PortageAPI(val handler: HandlerManager, databaseHandler: DatabaseHandler) 
         this.handler.register(ProfileHandler(ProfileRepository(this)))
         this.handler.register(GrantHandler(GrantRepository(this)))
 
-        this.handler.stream().forEach { it.enable() }
+        this.handler.stream().forEach {
+            it.enable()
+        }
     }
 
     fun disable() {
-        this.handler.stream().forEach { it.disable() }
+        this.handler.stream().forEach {
+            it.disable()
+        }
     }
 }
