@@ -1,6 +1,5 @@
 package io.github.nosequel.portage.bukkit.punishment.action
 
-import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.core.punishments.Punishment
 import io.github.nosequel.portage.core.punishments.PunishmentActionHandler
 import kotlinx.coroutines.runBlocking

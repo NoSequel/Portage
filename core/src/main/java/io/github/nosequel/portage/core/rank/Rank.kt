@@ -23,8 +23,6 @@ class Rank(@SerializedName("_id") val name: String) {
 
     /**
      * Check if a [Rank] object contains a certain [Metadata] value
-     *
-     * @return whether it contains the metadata
      */
     fun hasMetadata(metadata: Metadata): Boolean {
         return this.metadata.contains(metadata)
@@ -32,8 +30,6 @@ class Rank(@SerializedName("_id") val name: String) {
 
     /**
      * Get the display name of a [Rank] object
-     *
-     * @return the display name
      */
     fun getDisplayName(): String {
         return "$color$name".replace("&", "§").replace("_", " ")

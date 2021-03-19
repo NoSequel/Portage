@@ -8,11 +8,15 @@ import java.util.stream.Stream
 class RankHandler(val repository: RankRepository) : Handler {
 
     override fun enable() {
-        this.repository.retrieveAsync().forEach { this.repository.cache.add(it) }
+        this.repository.retrieveAsync().forEach {
+            this.repository.cache.add(it)
+        }
     }
 
     override fun disable() {
-        this.stream().forEach { this.repository.updateAsync(it, it.name) }
+        this.stream().forEach {
+            this.repository.updateAsync(it, it.name)
+        }
     }
 
     /**
@@ -65,10 +69,6 @@ class RankHandler(val repository: RankRepository) : Handler {
         return this.stream()
             .filter { it.hasMetadata(Metadata.DEFAULT) }
             .findFirst()
-            .orElseGet {
-                Rank("Default", Metadata.DEFAULT).also {
-                    this.register(it)
-                }
-            }
+            .orElseGet { Rank("Default", Metadata.DEFAULT).also { this.register(it) } }
     }
 }

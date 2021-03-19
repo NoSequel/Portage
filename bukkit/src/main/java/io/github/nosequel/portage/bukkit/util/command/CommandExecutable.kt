@@ -42,7 +42,7 @@ class CommandExecutable(private val data: CommandData) : Command(data.command.la
         }
 
         if (permission.isNotEmpty() && !sender.hasPermission(permission)) {
-            sender.sendMessage("${ChatColor.RED}xNo permission.")
+            sender.sendMessage("${ChatColor.RED}No permission.")
             return false
         }
 
