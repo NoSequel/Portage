@@ -103,7 +103,7 @@ class PunishmentHandler(val repository: PunishmentRepository, private val action
         this.repository.cache.add(punishment)
         this.actionHandler.registerPunishment(punishment)
 
-        this.redis.publishAsync(RedisPunishmentType.ADDED.toJson(punishment))
+        this.redis.publish(RedisPunishmentType.ADDED.toJson(punishment))
 
         return punishment
     }

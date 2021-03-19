@@ -3,10 +3,9 @@ package io.github.nosequel.portage.core.database.redis.repository
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.github.nosequel.portage.core.database.redis.RedisHandler
-import io.github.nosequel.portage.core.database.redis.repository.async.AsyncRedisRepository
 import redis.clients.jedis.JedisPubSub
 
-abstract class DefaultRedisRepository(private val channel: String, private val redisHandler: RedisHandler) : AsyncRedisRepository {
+abstract class DefaultRedisRepository(private val channel: String, private val redisHandler: RedisHandler) : RedisRepository {
 
     private val parser: JsonParser = JsonParser()
 

@@ -99,7 +99,7 @@ class GrantHandler(val repository: GrantRepository) : Handler {
         grant.expired = false
 
         this.repository.updateAsync(grant, grant.uuid.toString())
-        this.redis.publishAsync(RedisGrantType.ACTIVITY.toJson(grant))
+        this.redis.publish(RedisGrantType.ACTIVITY.toJson(grant))
 
         return grant
     }

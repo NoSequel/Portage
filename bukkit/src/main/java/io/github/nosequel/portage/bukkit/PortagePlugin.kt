@@ -6,7 +6,6 @@ import io.github.nosequel.portage.bukkit.grant.GrantCommand
 import io.github.nosequel.portage.bukkit.rank.RankCommand
 import io.github.nosequel.portage.bukkit.util.chat.ChatPromptHandler
 import io.github.nosequel.portage.bukkit.listener.ChatPromptListener
-import io.github.nosequel.portage.bukkit.listener.ProfileListener
 import io.github.nosequel.portage.bukkit.listener.PunishmentListener
 import io.github.nosequel.portage.bukkit.punishment.PunishmentCommand
 import io.github.nosequel.portage.bukkit.punishment.action.BukkitPunishmentActionHandler
@@ -33,7 +32,6 @@ class PortagePlugin : JavaPlugin() {
         this.handler.register(ChatPromptHandler().also { it.enable() })
 
         arrayOf(
-            ProfileListener(),
             PunishmentListener(),
             ChatPromptListener(this.handler.findOrThrow(ChatPromptHandler::class.java))
         ).forEach {
