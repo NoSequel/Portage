@@ -4,6 +4,7 @@ import io.github.nosequel.portage.core.handler.Handler
 import io.github.nosequel.portage.core.rank.metadata.Metadata
 import java.util.Optional
 import java.util.stream.Stream
+import kotlin.streams.toList
 
 class RankHandler(val repository: RankRepository) : Handler {
 
@@ -59,6 +60,14 @@ class RankHandler(val repository: RankRepository) : Handler {
             .findAny()
     }
 
+    /**
+     * Find all ranks with a certain metadata
+     */
+    fun find(metadata: Metadata): List<Rank> {
+        return this.stream()
+            .filter { it.hasMetadata(metadata) }
+            .toList()
+    }
 
     /**
      * Find the default [Rank], automatically makes a [Rank] with DEFAULT [Metadata] if it does not exist
@@ -66,8 +75,7 @@ class RankHandler(val repository: RankRepository) : Handler {
      * @return the default rank
      */
     fun findDefaultRank(): Rank {
-        return this.stream()
-            .filter { it.hasMetadata(Metadata.DEFAULT) }
+        return this.find(Metadata.HIDDEN).stream()
             .findFirst()
             .orElseGet { Rank("Default", Metadata.DEFAULT).also { this.register(it) } }
     }
