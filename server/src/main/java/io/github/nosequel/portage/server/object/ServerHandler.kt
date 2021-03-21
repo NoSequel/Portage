@@ -3,10 +3,11 @@ package io.github.nosequel.portage.server.`object`
 import io.github.nosequel.portage.core.database.DatabaseHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.server.`object`.redis.RedisServerRepository
+import io.github.nosequel.portage.server.session.SessionHandler
 import java.util.Optional
 import java.util.stream.Stream
 
-class ServerHandler {
+class ServerHandler(val sessionHandler: SessionHandler) {
 
     private val servers: MutableList<Server> = mutableListOf()
 

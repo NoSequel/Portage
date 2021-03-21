@@ -5,8 +5,10 @@ import com.google.gson.JsonObject
 
 import io.github.nosequel.portage.server.`object`.Server
 import io.github.nosequel.portage.server.`object`.ServerHandler
+import io.github.nosequel.portage.server.session.Session
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import java.util.UUID
 import kotlin.IllegalArgumentException
 
 enum class RedisServerType {
@@ -71,6 +73,38 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
+            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("uuid"), "No uuid field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("name"), "No name field found in provided JsonObject")
+
+            val uuid = UUID.fromString(json.get("uuid").asString)
+            val name = json.get("name").asString
+            val server = handler.find(json.get("server").asString)
+                .orElseGet { handler.register(json.get("server").asString) }
+
+            handler.sessionHandler.find(uuid).orElseGet {
+                handler.sessionHandler.register(Session(uuid, name, server).also {
+                    it.login(server)
+                })
+            }
+        }
+
+        /**
+         * Serialize a server to a new json object
+         */
+        override fun toJson(server: Server): JsonObject {
+            return JsonObject().also {
+                it.addProperty("server", server.name)
+                it.addProperty("type", STARTUP.name)
+            }
+        }
+    },
+
+    LOGOUT {
+        /**
+         * Handle an incoming message
+         */
+        override fun handle(json: JsonObject, handler: ServerHandler) {
             TODO("Not yet implemented")
         }
 
@@ -80,6 +114,7 @@ enum class RedisServerType {
         override fun toJson(server: Server): JsonObject {
             TODO("Not yet implemented")
         }
+
     };
 
     /**
@@ -91,5 +126,4 @@ enum class RedisServerType {
      * Serialize a server to a new json object
      */
     abstract fun toJson(server: Server): JsonObject
-
 }
