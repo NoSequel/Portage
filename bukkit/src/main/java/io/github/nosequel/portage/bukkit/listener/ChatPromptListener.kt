@@ -11,11 +11,23 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import java.util.Optional
 
 class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
 
     private val grantHandler: GrantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+
+    @EventHandler
+    fun join(event: PlayerJoinEvent) {
+        event.joinMessage = null
+    }
+
+    @EventHandler
+    fun quit(event: PlayerQuitEvent) {
+        event.quitMessage = null
+    }
 
     @EventHandler
     fun chat(event: AsyncPlayerChatEvent) {
@@ -34,9 +46,8 @@ class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
             val grant: Grant = grantHandler.findGrant(player.uniqueId)
             val rank: Rank = grant.findRank()
 
-            event.format = "${rank.prefix}${player.name}${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}${
-                event.message.replace("%", "$$")
-            }"
+            event.format =
+                "${rank.prefix}${player.name}${rank.suffix}${ChatColor.GRAY}: ${ChatColor.WHITE}${event.message.replace("%", "%%")}"
         }
     }
 }
