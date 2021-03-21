@@ -4,6 +4,7 @@ import io.github.nosequel.portage.core.database.DatabaseHandler
 import io.github.nosequel.portage.core.handler.Handler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.server.`object`.redis.RedisServerRepository
+import io.github.nosequel.portage.server.`object`.redis.RedisServerType
 import io.github.nosequel.portage.server.session.SessionHandler
 import java.util.Optional
 import java.util.stream.Stream
@@ -15,6 +16,10 @@ class ServerHandler(serverName: String, val sessionHandler: SessionHandler) : Ha
     val localServer = this.register(serverName)
     val redis: RedisServerRepository =
         RedisServerRepository(HandlerManager.instance.findOrThrow(DatabaseHandler::class.java).redis, this)
+
+    override fun enable() {
+        this.redis.publish(RedisServerType.STARTUP.toJson(this.localServer))
+    }
 
     /**
      * Register a new server to the server handler
