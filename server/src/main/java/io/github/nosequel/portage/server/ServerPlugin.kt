@@ -4,6 +4,7 @@ import io.github.nosequel.portage.bukkit.util.command.CommandHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.server.`object`.ServerHandler
 import io.github.nosequel.portage.server.command.ServerDumpCommand
+import io.github.nosequel.portage.server.command.StaffChatCommand
 import io.github.nosequel.portage.server.listener.PlayerListener
 import io.github.nosequel.portage.server.session.SessionHandler
 import org.bukkit.Bukkit
@@ -22,7 +23,7 @@ class ServerPlugin : JavaPlugin() {
         handler.register(serverHandler)
 
         handler.findOrThrow(CommandHandler::class.java)
-            .register(ServerDumpCommand(serverHandler))
+            .registerCommand(ServerDumpCommand(serverHandler), StaffChatCommand(serverHandler))
 
         Bukkit.getPluginManager().registerEvents(PlayerListener(handler), this)
     }
