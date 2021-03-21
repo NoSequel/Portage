@@ -13,4 +13,10 @@ class Server(val name: String, private val handler: ServerHandler) {
             it.addProperty("permission", permission)
         })
     }
+
+    fun executeCommand(command: String) {
+        this.handler.redis.publish(RedisServerType.COMMAND.toJson(this).also {
+            it.addProperty("command", command)
+        })
+    }
 }

@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 
-class StaffChatCommand(val handler: ServerHandler) {
+class StaffChatCommand(private val handler: ServerHandler) {
 
     @Command(label = "staffchat", aliases = ["sc", "staffc", "schat"], permission = "portage.staff")
     fun staffChat(sender: CommandSender, message: Array<String>) {

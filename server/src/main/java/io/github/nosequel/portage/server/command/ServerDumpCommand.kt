@@ -6,7 +6,7 @@ import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import java.util.stream.Collectors
 
-class ServerDumpCommand(val serverHandler: ServerHandler) {
+class ServerDumpCommand(private val serverHandler: ServerHandler) {
 
     @Command(label="serverdump", permission="portage.staff")
     fun serverDump(sender: CommandSender) {

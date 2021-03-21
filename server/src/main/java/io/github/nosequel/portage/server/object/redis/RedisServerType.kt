@@ -67,6 +67,30 @@ enum class RedisServerType {
             }
         }
     },
+    
+    COMMAND {
+        /**
+         * Handle an incoming message
+         */
+        override fun handle(json: JsonObject, handler: ServerHandler) {
+            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("command"), "No message field found in provided JsonObject")
+
+            if (handler.localServer.name == json.get("server").asString) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), json.get("command").asString)
+            }
+        }
+
+        /**
+         * Serialize a server to a new json object
+         */
+        override fun toJson(server: Server): JsonObject {
+            return JsonObject().also {
+                it.addProperty("server", server.name)
+                it.addProperty("type", COMMAND.name)
+            }
+        }
+    },
 
     JOIN {
         /**
