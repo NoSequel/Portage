@@ -1,6 +1,7 @@
 package io.github.nosequel.portage.server.session
 
 import io.github.nosequel.portage.server.`object`.Server
+import io.github.nosequel.portage.server.session.task.SessionChecker
 import java.util.UUID
 import java.util.function.Consumer
 
@@ -14,6 +15,7 @@ class Session(val uuid: UUID, val name: String, var server: Server) {
      */
     fun logout(logoutCallback: Consumer<Session>) {
         this.lastLogout = System.currentTimeMillis()
+        SessionChecker(this, logoutCallback)
     }
 
     /**
