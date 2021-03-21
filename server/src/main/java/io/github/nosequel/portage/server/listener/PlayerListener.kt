@@ -17,19 +17,23 @@ class PlayerListener(handlerManager: HandlerManager) : Listener {
     fun join(event: PlayerJoinEvent) {
         val player = event.player
 
-        serverHandler.redis.publish(RedisServerType.JOIN.toJson(serverHandler.localServer).also {
-            it.addProperty("uuid", player.uniqueId.toString())
-            it.addProperty("name", player.name)
-        })
+        if(player.hasPermission("portage.staff")) {
+            serverHandler.redis.publish(RedisServerType.JOIN.toJson(serverHandler.localServer).also {
+                it.addProperty("uuid", player.uniqueId.toString())
+                it.addProperty("name", player.name)
+            })
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun quit(event: PlayerQuitEvent) {
         val player = event.player
 
-        serverHandler.redis.publish(RedisServerType.LOGOUT.toJson(serverHandler.localServer).also {
-            it.addProperty("uuid", player.uniqueId.toString())
-            it.addProperty("name", player.name)
-        })
+        if(player.hasPermission("portage.staff")) {
+            serverHandler.redis.publish(RedisServerType.LOGOUT.toJson(serverHandler.localServer).also {
+                it.addProperty("uuid", player.uniqueId.toString())
+                it.addProperty("name", player.name)
+            })
+        }
     }
 }
