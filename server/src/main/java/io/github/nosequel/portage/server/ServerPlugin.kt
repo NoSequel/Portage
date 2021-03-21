@@ -10,11 +10,13 @@ import org.bukkit.plugin.java.JavaPlugin
 class ServerPlugin : JavaPlugin() {
 
     override fun onEnable() {
+        this.saveDefaultConfig()
+
         val handler: HandlerManager = HandlerManager.instance
         val sessionHandler = SessionHandler()
 
         handler.register(sessionHandler)
-        handler.register(ServerHandler(sessionHandler))
+        handler.register(ServerHandler(this.config.getString("server.id"), sessionHandler))
 
         Bukkit.getPluginManager().registerEvents(PlayerListener(handler), this)
     }

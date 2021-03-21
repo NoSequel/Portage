@@ -9,12 +9,15 @@ class Session(val uuid: UUID, val name: String, var server: Server) {
 
     var lastLogout: Long = 0L
     var lastLogin: Long = 0L
+    var lastActivity: SessionActivity = SessionActivity.JOIN
 
     /**
      * Logout the session
      */
     fun logout(logoutCallback: Consumer<Session>) {
         this.lastLogout = System.currentTimeMillis()
+        this.lastActivity = SessionActivity.LEFT
+
         SessionChecker(this, logoutCallback)
     }
 
@@ -23,6 +26,7 @@ class Session(val uuid: UUID, val name: String, var server: Server) {
      */
     fun login(server: Server) {
         this.lastLogin = System.currentTimeMillis()
+        this.lastActivity = SessionActivity.JOIN
         this.server = server
     }
 }

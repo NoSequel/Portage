@@ -3,6 +3,7 @@ package io.github.nosequel.portage.server.session
 import io.github.nosequel.portage.core.handler.Handler
 import java.util.Optional
 import java.util.UUID
+import kotlin.streams.toList
 
 class SessionHandler : Handler {
 

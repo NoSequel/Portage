@@ -6,6 +6,7 @@ import com.google.gson.JsonObject
 import io.github.nosequel.portage.server.`object`.Server
 import io.github.nosequel.portage.server.`object`.ServerHandler
 import io.github.nosequel.portage.server.session.Session
+import io.github.nosequel.portage.server.session.SessionActivity
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import java.util.UUID
@@ -76,16 +77,15 @@ enum class RedisServerType {
                 .orElseGet { handler.register(json.get("server").asString) }
 
             val session = this.findSession(json, handler)
-
-            if (session.lastLogin - session.lastLogout < 0) {
-                Bukkit.getOnlinePlayers().stream()
-                    .filter { it.hasPermission("portage.staff") }
-                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name}${ChatColor.GREEN} joined ${ChatColor.AQUA}${session.server.name} (from ${server.name})") }
+            val message: String = if (session.lastActivity == SessionActivity.LEFT) {
+                "${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name}${ChatColor.GREEN} joined ${ChatColor.AQUA}${session.server.name} (from ${server.name})"
             } else {
-                Bukkit.getOnlinePlayers().stream()
-                    .filter { it.hasPermission("portage.staff") }
-                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.GREEN}joined ${ChatColor.AQUA}the network (${server.name})") }
+                "${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.GREEN}joined ${ChatColor.AQUA}the network (${server.name})"
             }
+
+            Bukkit.getOnlinePlayers().stream()
+                .filter { it.hasPermission("portage.staff") }
+                .forEach { it.sendMessage(message) }
 
             session.login(server)
         }

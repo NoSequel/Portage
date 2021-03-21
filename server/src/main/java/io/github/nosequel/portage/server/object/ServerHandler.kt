@@ -8,11 +8,11 @@ import io.github.nosequel.portage.server.session.SessionHandler
 import java.util.Optional
 import java.util.stream.Stream
 
-class ServerHandler(val sessionHandler: SessionHandler) : Handler {
+class ServerHandler(serverName: String, val sessionHandler: SessionHandler) : Handler {
 
     private val servers: MutableList<Server> = mutableListOf()
 
-    val localServer = this.register("local")
+    val localServer = this.register(serverName)
     val redis: RedisServerRepository =
         RedisServerRepository(HandlerManager.instance.findOrThrow(DatabaseHandler::class.java).redis, this)
 
