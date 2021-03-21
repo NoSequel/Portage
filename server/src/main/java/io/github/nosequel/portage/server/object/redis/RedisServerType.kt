@@ -1,12 +1,12 @@
 package io.github.nosequel.portage.server.`object`.redis
 
+import com.google.common.base.Preconditions
 import com.google.gson.JsonObject
 
 import io.github.nosequel.portage.server.`object`.Server
 import io.github.nosequel.portage.server.`object`.ServerHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import java.lang.IllegalArgumentException
 import kotlin.IllegalArgumentException
 
 enum class RedisServerType {
@@ -16,14 +16,20 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            TODO("Not yet implemented")
+            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+
+            handler.find(json.get("server").asString)
+                .orElseGet { handler.register(json.get("server").asString) }
         }
 
         /**
          * Serialize a server to a new json object
          */
         override fun toJson(server: Server): JsonObject {
-            TODO("Not yet implemented")
+            return JsonObject().also {
+                it.addProperty("server", server.name)
+                it.addProperty("type", STARTUP.name)
+            }
         }
     },
 
@@ -32,9 +38,8 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            if (!json.has("message")) {
-                throw IllegalArgumentException("JsonObject provided in RedisServerType.MESSAGE doesnt contain message field")
-            }
+            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("message"), "No message field found in provided JsonObject")
 
             if (handler.localServer.name == json.get("server").asString) {
                 val message = ChatColor.translateAlternateColorCodes('&', json.get("message").asString)
