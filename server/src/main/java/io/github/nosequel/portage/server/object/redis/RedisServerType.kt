@@ -73,21 +73,10 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
-            Preconditions.checkArgument(json.has("uuid"), "No uuid field found in provided JsonObject")
-            Preconditions.checkArgument(json.has("name"), "No name field found in provided JsonObject")
-
-            val uuid = UUID.fromString(json.get("uuid").asString)
-            val name = json.get("name").asString
             val server = handler.find(json.get("server").asString)
                 .orElseGet { handler.register(json.get("server").asString) }
 
-            handler.sessionHandler.find(uuid).orElseGet {
-                handler.sessionHandler.register(Session(uuid, name, server).also {
-                    it.login(server)
-                    // todo login handling
-                })
-            }
+            findSession(json, handler).login(server)
         }
 
         /**
@@ -106,21 +95,8 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
-            Preconditions.checkArgument(json.has("uuid"), "No uuid field found in provided JsonObject")
-            Preconditions.checkArgument(json.has("name"), "No name field found in provided JsonObject")
-
-            val uuid = UUID.fromString(json.get("uuid").asString)
-            val name = json.get("name").asString
-            val server = handler.find(json.get("server").asString)
-                .orElseGet { handler.register(json.get("server").asString) }
-
-            handler.sessionHandler.find(uuid).orElseGet {
-                handler.sessionHandler.register(Session(uuid, name, server).also {
-                    it.logout {
-                        // todo logout handling
-                    }
-                })
+            findSession(json, handler).logout {
+                // todo logout handling
             }
         }
 
@@ -145,4 +121,21 @@ enum class RedisServerType {
      */
     abstract fun toJson(server: Server): JsonObject
 
+    /**
+     * Find a session
+     */
+    fun findSession(json: JsonObject, handler: ServerHandler) : Session {
+        Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+        Preconditions.checkArgument(json.has("uuid"), "No uuid field found in provided JsonObject")
+        Preconditions.checkArgument(json.has("name"), "No name field found in provided JsonObject")
+
+        val uuid = UUID.fromString(json.get("uuid").asString)
+        val name = json.get("name").asString
+        val server = handler.find(json.get("server").asString)
+            .orElseGet { handler.register(json.get("server").asString) }
+
+        return handler.sessionHandler.find(uuid).orElseGet {
+            handler.sessionHandler.register(Session(uuid, name, server))
+        }
+    }
 }

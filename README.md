@@ -4,6 +4,7 @@ I currently do not recommend using it in its current state,
 therefore I won't publish releases for this until further notice.
 
 # Todo
+- Finalize the server module
 - Possibly add more features, such as essential commands, etc.
 - Synchronize ranks with redis
 
