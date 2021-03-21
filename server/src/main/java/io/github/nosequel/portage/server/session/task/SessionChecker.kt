@@ -11,7 +11,7 @@ class SessionChecker(session: Session, logoutCallback: Consumer<Session>) {
         runBlocking {
             delay(1000)
 
-            if (session.lastLogout - session.lastLogin <= 0) {
+            if (session.lastLogin - session.lastLogout <= 0) {
                 logoutCallback.accept(session)
             }
         }

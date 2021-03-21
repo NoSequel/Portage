@@ -9,7 +9,6 @@ import io.github.nosequel.portage.server.session.Session
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import java.util.UUID
-import kotlin.IllegalArgumentException
 
 enum class RedisServerType {
 
@@ -76,7 +75,19 @@ enum class RedisServerType {
             val server = handler.find(json.get("server").asString)
                 .orElseGet { handler.register(json.get("server").asString) }
 
-            findSession(json, handler).login(server)
+            val session = this.findSession(json, handler)
+
+            if (session.lastLogin - session.lastLogout < 0) {
+                Bukkit.getOnlinePlayers().stream()
+                    .filter { it.hasPermission("portage.staff") }
+                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name}${ChatColor.GREEN} joined ${ChatColor.AQUA}${session.server.name} (from ${server.name})") }
+            } else {
+                Bukkit.getOnlinePlayers().stream()
+                    .filter { it.hasPermission("portage.staff") }
+                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.GREEN}joined ${ChatColor.AQUA}the network (${server.name})") }
+            }
+
+            session.login(server)
         }
 
         /**
@@ -85,7 +96,7 @@ enum class RedisServerType {
         override fun toJson(server: Server): JsonObject {
             return JsonObject().also {
                 it.addProperty("server", server.name)
-                it.addProperty("type", STARTUP.name)
+                it.addProperty("type", JOIN.name)
             }
         }
     },
@@ -95,8 +106,10 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            findSession(json, handler).logout {
-                // todo logout handling
+            findSession(json, handler).logout { session ->
+                Bukkit.getOnlinePlayers().stream()
+                    .filter { it.hasPermission("portage.staff") }
+                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.RED}left ${ChatColor.AQUA}the network (from ${session.server.name})") }
             }
         }
 
@@ -106,7 +119,7 @@ enum class RedisServerType {
         override fun toJson(server: Server): JsonObject {
             return JsonObject().also {
                 it.addProperty("server", server.name)
-                it.addProperty("type", STARTUP.name)
+                it.addProperty("type", LOGOUT.name)
             }
         }
     };
@@ -124,7 +137,7 @@ enum class RedisServerType {
     /**
      * Find a session
      */
-    fun findSession(json: JsonObject, handler: ServerHandler) : Session {
+    fun findSession(json: JsonObject, handler: ServerHandler): Session {
         Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
         Preconditions.checkArgument(json.has("uuid"), "No uuid field found in provided JsonObject")
         Preconditions.checkArgument(json.has("name"), "No name field found in provided JsonObject")

@@ -2,5 +2,5 @@ main: io.github.nosequel.portage.bukkit.PortagePlugin
 version: 1.0-SNAPSHOT
 name: Portage
 author: NoSQL
-website: vapor.rip
+website: github.com/NoSequel/Portage
 description: Portage is a well-optimized multi-purpose network core utilizing MongoDB and Redis

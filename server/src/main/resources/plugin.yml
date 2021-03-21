@@ -1,0 +1,7 @@
+name: Portage-Server
+version: 1.0-SNAPSHOT
+main: io.github.nosequel.portage.server.ServerPlugin
+author: NV6
+website: github.com/NoSequel/Portage
+depend:
+  - Portage
