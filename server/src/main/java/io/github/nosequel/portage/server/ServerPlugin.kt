@@ -1,7 +1,9 @@
 package io.github.nosequel.portage.server
 
+import io.github.nosequel.portage.bukkit.util.command.CommandHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.server.`object`.ServerHandler
+import io.github.nosequel.portage.server.command.ServerDumpCommand
 import io.github.nosequel.portage.server.listener.PlayerListener
 import io.github.nosequel.portage.server.session.SessionHandler
 import org.bukkit.Bukkit
@@ -14,9 +16,13 @@ class ServerPlugin : JavaPlugin() {
 
         val handler: HandlerManager = HandlerManager.instance
         val sessionHandler = SessionHandler()
+        val serverHandler = ServerHandler(this.config.getString("server.id"), sessionHandler)
 
         handler.register(sessionHandler)
-        handler.register(ServerHandler(this.config.getString("server.id"), sessionHandler))
+        handler.register(serverHandler)
+
+        handler.findOrThrow(CommandHandler::class.java)
+            .register(ServerDumpCommand(serverHandler))
 
         Bukkit.getPluginManager().registerEvents(PlayerListener(handler), this)
     }
