@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class MetadataCommand(private val plugin: JavaPlugin) {
 
-
     @Command(label = "metadata", aliases = ["togglemetadata"], permission = "portage.staff")
     fun toggleMetadata(player: Player, metadata: StaffMetadataUtil.StaffMetadataType, toggled: Boolean) {
         val message: String = if (toggled) {
@@ -19,7 +18,7 @@ class MetadataCommand(private val plugin: JavaPlugin) {
 
         StaffMetadataUtil.toggleMetadata(
             player,
-            StaffMetadataUtil.StaffMetadataType.STAFF_CHAT,
+            metadata,
             toggled,
             plugin
         )
