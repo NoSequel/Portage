@@ -2,15 +2,15 @@ package io.github.nosequel.portage.server.`object`.redis
 
 import com.google.common.base.Preconditions
 import com.google.gson.JsonObject
+import io.github.nosequel.portage.core.handler.HandlerManager
 
 import io.github.nosequel.portage.server.`object`.Server
 import io.github.nosequel.portage.server.`object`.ServerHandler
+import io.github.nosequel.portage.server.connectivity.ConnectivityHandler
 import io.github.nosequel.portage.server.session.Session
 import io.github.nosequel.portage.server.session.SessionActivity
-import io.github.nosequel.portage.server.util.StaffMetadataUtil
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.entity.Player
 import java.util.UUID
 
 enum class RedisServerType {
@@ -53,9 +53,7 @@ enum class RedisServerType {
                     Bukkit.broadcastMessage(message)
                 } else {
                     Bukkit.getOnlinePlayers().stream()
-                        .filter {
-                            it.hasPermission(permission) && (!permission.equals("portage.staff") || hasNotifications(it))
-                        }
+                        .filter { it.hasPermission(permission) }
                         .forEach { it.sendMessage(message) }
                 }
             }
@@ -105,15 +103,12 @@ enum class RedisServerType {
                 .orElseGet { handler.register(json.get("server").asString) }
 
             val session = this.findSession(json, handler)
-            val message: String = if (session.lastActivity == SessionActivity.LEFT) {
-                "${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name}${ChatColor.GREEN} joined ${ChatColor.AQUA}${session.server.name} (from ${server.name})"
-            } else {
-                "${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.GREEN}joined ${ChatColor.AQUA}the network (${server.name})"
-            }
 
-            Bukkit.getOnlinePlayers().stream()
-                .filter { it.hasPermission("portage.staff") && hasNotifications(it) }
-                .forEach { it.sendMessage(message) }
+            if (session.lastActivity == SessionActivity.LEFT) {
+                listener.handleSwitch(session, server, session.server)
+            } else {
+                listener.handleConnect(session, server)
+            }
 
             session.login(server)
         }
@@ -134,10 +129,8 @@ enum class RedisServerType {
          * Handle an incoming message
          */
         override fun handle(json: JsonObject, handler: ServerHandler) {
-            findSession(json, handler).logout { session ->
-                Bukkit.getOnlinePlayers().stream()
-                    .filter { it.hasPermission("portage.staff") && hasNotifications(it) }
-                    .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.RED}left ${ChatColor.AQUA}the network (from ${session.server.name})") }
+            findSession(json, handler).logout {
+                listener.handleDisconnect(it, it.server)
             }
         }
 
@@ -180,10 +173,6 @@ enum class RedisServerType {
         }
     }
 
-    /**
-     * Check if a player has notifications on
-     */
-    fun hasNotifications(player: Player): Boolean {
-        return StaffMetadataUtil.hasMetadata(player, StaffMetadataUtil.ToggleableStaffMetadataType.NOTIFICATIONS)
-    }
+    val listener = HandlerManager.instance.findOrThrow(ConnectivityHandler::class.java).listener
+
 }

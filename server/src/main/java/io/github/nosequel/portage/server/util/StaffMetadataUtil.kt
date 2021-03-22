@@ -12,7 +12,7 @@ class StaffMetadataUtil {
          */
         fun toggleMetadata(
             player: Player,
-            metadata: ToggleableStaffMetadataType,
+            metadata: StaffMetadataType,
             toggled: Boolean,
             plugin: JavaPlugin
         ) {
@@ -22,14 +22,15 @@ class StaffMetadataUtil {
         /**
          * Check if the player has the metadata
          */
-        fun hasMetadata(player: Player, metadata: ToggleableStaffMetadataType): Boolean {
+        fun hasMetadata(player: Player, metadata: StaffMetadataType): Boolean {
             return player.hasMetadata(metadata.id) && player.getMetadata(metadata.id)[0].asBoolean()
         }
     }
 
-    enum class ToggleableStaffMetadataType(val id: String) {
+    enum class StaffMetadataType(val id: String) {
 
-        NOTIFICATIONS("staff-notifications")
+        CONNECTIVITY("connectivity-notifications"),
+        STAFF_CHAT("staff-chat-notifications"),
 
     }
 }

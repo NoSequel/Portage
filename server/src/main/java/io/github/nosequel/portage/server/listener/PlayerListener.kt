@@ -19,7 +19,7 @@ class PlayerListener(handlerManager: HandlerManager) : Listener {
         val player = event.player
 
         if(player.hasPermission("portage.staff")) {
-            player.sendMessage("${ChatColor.YELLOW}Toggle staff notifications by typing '/notifications true'.")
+            player.sendMessage("${ChatColor.YELLOW}Toggle staff notifications by typing '/metadata CONNECTIVITY true'.")
 
             serverHandler.redis.publish(RedisServerType.JOIN.toJson(serverHandler.localServer).also {
                 it.addProperty("uuid", player.uniqueId.toString())

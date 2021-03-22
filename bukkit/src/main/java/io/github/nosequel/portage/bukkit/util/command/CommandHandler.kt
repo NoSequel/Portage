@@ -22,7 +22,7 @@ import java.util.stream.Collectors
 
 class CommandHandler(val fallbackPrefix: String) : Handler {
 
-    private val typeAdapters: MutableList<TypeAdapter<*>> = mutableListOf()
+    val typeAdapters: MutableList<TypeAdapter<*>> = mutableListOf()
     private val commands: MutableList<CommandData> = ArrayList<CommandData>()
 
     /**
