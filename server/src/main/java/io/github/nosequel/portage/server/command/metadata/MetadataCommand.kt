@@ -16,13 +16,7 @@ class MetadataCommand(private val plugin: JavaPlugin) {
             "${ChatColor.YELLOW}You have toggled your ${metadata.id} metadata ${ChatColor.RED}off."
         }
 
-        StaffMetadataUtil.toggleMetadata(
-            player,
-            metadata,
-            toggled,
-            plugin
-        )
-
+        StaffMetadataUtil.toggleMetadata(player, metadata, toggled)
         player.sendMessage(message)
     }
 }

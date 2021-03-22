@@ -1,5 +1,6 @@
 package io.github.nosequel.portage.server.util
 
+import io.github.nosequel.portage.server.ServerPlugin
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.java.JavaPlugin
@@ -10,13 +11,8 @@ class StaffMetadataUtil {
         /**
          * Toggle the metadata of a player
          */
-        fun toggleMetadata(
-            player: Player,
-            metadata: StaffMetadataType,
-            toggled: Boolean,
-            plugin: JavaPlugin
-        ) {
-            player.setMetadata(metadata.id, FixedMetadataValue(plugin, toggled))
+        fun toggleMetadata(player: Player, metadata: StaffMetadataType, toggled: Boolean) {
+            player.setMetadata(metadata.id, FixedMetadataValue(JavaPlugin.getPlugin(ServerPlugin::class.java), toggled))
         }
 
         /**

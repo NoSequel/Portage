@@ -1,14 +1,17 @@
 package io.github.nosequel.portage.server.listener
 
 import io.github.nosequel.portage.core.handler.HandlerManager
+import io.github.nosequel.portage.server.ServerPlugin
 import io.github.nosequel.portage.server.`object`.ServerHandler
 import io.github.nosequel.portage.server.`object`.redis.RedisServerType
+import io.github.nosequel.portage.server.util.StaffMetadataUtil
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.plugin.java.JavaPlugin
 
 class PlayerListener(handlerManager: HandlerManager) : Listener {
 
@@ -19,7 +22,8 @@ class PlayerListener(handlerManager: HandlerManager) : Listener {
         val player = event.player
 
         if(player.hasPermission("portage.staff")) {
-            player.sendMessage("${ChatColor.YELLOW}Toggle staff notifications by typing '/metadata CONNECTIVITY true'.")
+            player.sendMessage("${ChatColor.YELLOW}You can disable staff notifications by typing '/metadata CONNECTIVITY false'.")
+            StaffMetadataUtil.toggleMetadata(player, StaffMetadataUtil.StaffMetadataType.CONNECTIVITY, true)
 
             serverHandler.redis.publish(RedisServerType.JOIN.toJson(serverHandler.localServer).also {
                 it.addProperty("uuid", player.uniqueId.toString())
