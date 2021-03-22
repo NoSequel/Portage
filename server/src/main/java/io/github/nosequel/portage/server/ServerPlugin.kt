@@ -3,6 +3,7 @@ package io.github.nosequel.portage.server
 import io.github.nosequel.portage.bukkit.util.command.CommandHandler
 import io.github.nosequel.portage.core.handler.HandlerManager
 import io.github.nosequel.portage.server.`object`.ServerHandler
+import io.github.nosequel.portage.server.command.NotificationToggleCommand
 import io.github.nosequel.portage.server.command.RemoteExecuteCommand
 import io.github.nosequel.portage.server.command.ServerDumpCommand
 import io.github.nosequel.portage.server.command.StaffChatCommand
@@ -26,7 +27,8 @@ class ServerPlugin : JavaPlugin() {
         handler.findOrThrow(CommandHandler::class.java).registerCommand(
             ServerDumpCommand(serverHandler),
             StaffChatCommand(serverHandler),
-            RemoteExecuteCommand(serverHandler)
+            RemoteExecuteCommand(serverHandler),
+            NotificationToggleCommand(this)
         )
 
         Bukkit.getPluginManager().registerEvents(PlayerListener(handler), this)

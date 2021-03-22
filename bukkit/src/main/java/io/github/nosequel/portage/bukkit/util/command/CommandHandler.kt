@@ -137,7 +137,8 @@ class CommandHandler(val fallbackPrefix: String) : Handler {
             IntegerTypeAdapter(),
             PlayerTypeAdapter(),
             RankTypeAdapter(),
-            DurationTypeAdapter()
+            DurationTypeAdapter(),
+            BooleanTypeAdapter()
         ))
     }
 }

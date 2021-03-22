@@ -7,8 +7,10 @@ import io.github.nosequel.portage.server.`object`.Server
 import io.github.nosequel.portage.server.`object`.ServerHandler
 import io.github.nosequel.portage.server.session.Session
 import io.github.nosequel.portage.server.session.SessionActivity
+import io.github.nosequel.portage.server.util.StaffMetadataUtil
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 import java.util.UUID
 
 enum class RedisServerType {
@@ -51,7 +53,9 @@ enum class RedisServerType {
                     Bukkit.broadcastMessage(message)
                 } else {
                     Bukkit.getOnlinePlayers().stream()
-                        .filter { it.hasPermission(permission) }
+                        .filter {
+                            it.hasPermission(permission) && (!permission.equals("portage.staff") || hasNotifications(it))
+                        }
                         .forEach { it.sendMessage(message) }
                 }
             }
@@ -67,7 +71,7 @@ enum class RedisServerType {
             }
         }
     },
-    
+
     COMMAND {
         /**
          * Handle an incoming message
@@ -108,7 +112,7 @@ enum class RedisServerType {
             }
 
             Bukkit.getOnlinePlayers().stream()
-                .filter { it.hasPermission("portage.staff") }
+                .filter { it.hasPermission("portage.staff") && hasNotifications(it) }
                 .forEach { it.sendMessage(message) }
 
             session.login(server)
@@ -132,7 +136,7 @@ enum class RedisServerType {
         override fun handle(json: JsonObject, handler: ServerHandler) {
             findSession(json, handler).logout { session ->
                 Bukkit.getOnlinePlayers().stream()
-                    .filter { it.hasPermission("portage.staff") }
+                    .filter { it.hasPermission("portage.staff") && hasNotifications(it) }
                     .forEach { it.sendMessage("${ChatColor.BLUE}[Staff] ${ChatColor.AQUA}${session.name} ${ChatColor.RED}left ${ChatColor.AQUA}the network (from ${session.server.name})") }
             }
         }
@@ -174,5 +178,12 @@ enum class RedisServerType {
         return handler.sessionHandler.find(uuid).orElseGet {
             handler.sessionHandler.register(Session(uuid, name, server))
         }
+    }
+
+    /**
+     * Check if a player has notifications on
+     */
+    fun hasNotifications(player: Player): Boolean {
+        return StaffMetadataUtil.hasMetadata(player, StaffMetadataUtil.ToggleableStaffMetadataType.NOTIFICATIONS)
     }
 }
