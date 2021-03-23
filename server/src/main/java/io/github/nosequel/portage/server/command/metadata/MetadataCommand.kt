@@ -6,7 +6,7 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class MetadataCommand(private val plugin: JavaPlugin) {
+class MetadataCommand {
 
     @Command(label = "metadata", aliases = ["togglemetadata"], permission = "portage.staff")
     fun toggleMetadata(player: Player, metadata: StaffMetadataUtil.StaffMetadataType, toggled: Boolean) {

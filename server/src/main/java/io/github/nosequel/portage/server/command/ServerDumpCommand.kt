@@ -1,7 +1,7 @@
 package io.github.nosequel.portage.server.command
 
 import io.github.nosequel.portage.bukkit.util.command.annotation.Command
-import io.github.nosequel.portage.server.`object`.ServerHandler
+import io.github.nosequel.portage.core.server.`object`.ServerHandler
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import java.util.stream.Collectors

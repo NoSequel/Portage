@@ -1,7 +1,7 @@
-package io.github.nosequel.portage.server.connectivity
+package io.github.nosequel.portage.core.server.connectivity
 
-import io.github.nosequel.portage.server.`object`.Server
-import io.github.nosequel.portage.server.session.Session
+import io.github.nosequel.portage.core.server.`object`.Server
+import io.github.nosequel.portage.core.server.session.Session
 
 interface ConnectivityListener {
 

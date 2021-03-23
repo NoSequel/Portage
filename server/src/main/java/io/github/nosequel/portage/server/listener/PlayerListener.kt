@@ -1,9 +1,9 @@
 package io.github.nosequel.portage.server.listener
 
 import io.github.nosequel.portage.core.handler.HandlerManager
-import io.github.nosequel.portage.server.ServerPlugin
-import io.github.nosequel.portage.server.`object`.ServerHandler
-import io.github.nosequel.portage.server.`object`.redis.RedisServerType
+import io.github.nosequel.portage.core.server.`object`.ServerHandler
+import io.github.nosequel.portage.core.server.`object`.redis.RedisServerType
+
 import io.github.nosequel.portage.server.util.StaffMetadataUtil
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.plugin.java.JavaPlugin
 
 class PlayerListener(handlerManager: HandlerManager) : Listener {
 

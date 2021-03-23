@@ -1,16 +1,16 @@
-package io.github.nosequel.portage.server.`object`.redis
+package io.github.nosequel.portage.core.server.`object`.redis
 
 import com.google.common.base.Preconditions
 import com.google.gson.JsonObject
 import io.github.nosequel.portage.core.handler.HandlerManager
+import io.github.nosequel.portage.core.server.`object`.Server
+import io.github.nosequel.portage.core.server.`object`.ServerHandler
+import io.github.nosequel.portage.core.server.adapter.ServerAdapterHandler
+import io.github.nosequel.portage.core.server.connectivity.ConnectivityHandler
 
-import io.github.nosequel.portage.server.`object`.Server
-import io.github.nosequel.portage.server.`object`.ServerHandler
-import io.github.nosequel.portage.server.connectivity.ConnectivityHandler
-import io.github.nosequel.portage.server.session.Session
-import io.github.nosequel.portage.server.session.SessionActivity
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import io.github.nosequel.portage.core.server.session.Session
+import io.github.nosequel.portage.core.server.session.SessionActivity
+
 import java.util.UUID
 
 enum class RedisServerType {
@@ -46,15 +46,13 @@ enum class RedisServerType {
             Preconditions.checkArgument(json.has("message"), "No message field found in provided JsonObject")
 
             if (handler.localServer.name == json.get("server").asString) {
-                val message = ChatColor.translateAlternateColorCodes('&', json.get("message").asString)
+                val message = json.get("message").asString
                 val permission = if (json.has("permission")) json.get("permission").asString else ""
 
                 if (permission == "") {
-                    Bukkit.broadcastMessage(message)
+                    this.adapter.broadcastMessage(message)
                 } else {
-                    Bukkit.getOnlinePlayers().stream()
-                        .filter { it.hasPermission(permission) }
-                        .forEach { it.sendMessage(message) }
+                    this.adapter.broadcastMessage(message, permission)
                 }
             }
         }
@@ -79,7 +77,7 @@ enum class RedisServerType {
             Preconditions.checkArgument(json.has("command"), "No message field found in provided JsonObject")
 
             if (handler.localServer.name == json.get("server").asString) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), json.get("command").asString)
+                this.adapter.executeCommand(json.get("command").asString)
             }
         }
 
@@ -174,5 +172,6 @@ enum class RedisServerType {
     }
 
     val listener = HandlerManager.instance.findOrThrow(ConnectivityHandler::class.java).listener
+    val adapter = HandlerManager.instance.findOrThrow(ServerAdapterHandler::class.java).adapter
 
 }

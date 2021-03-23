@@ -1,6 +1,6 @@
-package io.github.nosequel.portage.server.`object`
+package io.github.nosequel.portage.core.server.`object`
 
-import io.github.nosequel.portage.server.`object`.redis.RedisServerType
+import io.github.nosequel.portage.core.server.`object`.redis.RedisServerType
 
 class Server(val name: String, private val handler: ServerHandler) {
 

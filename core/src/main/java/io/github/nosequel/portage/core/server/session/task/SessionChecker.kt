@@ -1,7 +1,7 @@
-package io.github.nosequel.portage.server.session.task
+package io.github.nosequel.portage.core.server.session.task
 
-import io.github.nosequel.portage.server.session.Session
-import io.github.nosequel.portage.server.session.SessionActivity
+import io.github.nosequel.portage.core.server.session.Session
+import io.github.nosequel.portage.core.server.session.SessionActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

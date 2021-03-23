@@ -1,11 +1,12 @@
-package io.github.nosequel.portage.server.`object`
+package io.github.nosequel.portage.core.server.`object`
 
 import io.github.nosequel.portage.core.database.DatabaseHandler
 import io.github.nosequel.portage.core.handler.Handler
 import io.github.nosequel.portage.core.handler.HandlerManager
-import io.github.nosequel.portage.server.`object`.redis.RedisServerRepository
-import io.github.nosequel.portage.server.`object`.redis.RedisServerType
-import io.github.nosequel.portage.server.session.SessionHandler
+import io.github.nosequel.portage.core.server.`object`.redis.RedisServerRepository
+import io.github.nosequel.portage.core.server.`object`.redis.RedisServerType
+
+import io.github.nosequel.portage.core.server.session.SessionHandler
 import java.util.Optional
 import java.util.stream.Stream
 

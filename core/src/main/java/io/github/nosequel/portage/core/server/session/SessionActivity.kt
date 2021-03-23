@@ -1,4 +1,4 @@
-package io.github.nosequel.portage.server.session
+package io.github.nosequel.portage.core.server.session
 
 enum class SessionActivity {
 
