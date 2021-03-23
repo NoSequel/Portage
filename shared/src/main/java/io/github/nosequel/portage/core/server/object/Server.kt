@@ -14,6 +14,13 @@ class Server(val name: String, private val handler: ServerHandler) {
         })
     }
 
+    fun sendMessage(message: String, permission: String, type: RedisServerType) {
+        this.handler.redis.publish(type.toJson(this).also {
+            it.addProperty("message", message)
+            it.addProperty("permission", permission)
+        })
+    }
+
     fun executeCommand(command: String) {
         this.handler.redis.publish(RedisServerType.COMMAND.toJson(this).also {
             it.addProperty("command", command)

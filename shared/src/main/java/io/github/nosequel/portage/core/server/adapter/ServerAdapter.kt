@@ -13,6 +13,11 @@ interface ServerAdapter {
     fun broadcastMessage(message: String, permission: String)
 
     /**
+     * Send a staff chat message
+     */
+    fun sendStaffChatMessage(message: String, permission: String)
+
+    /**
      * Execute a command on the server
      */
     fun executeCommand(command: String)

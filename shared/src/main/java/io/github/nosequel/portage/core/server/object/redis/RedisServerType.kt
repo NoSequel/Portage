@@ -25,16 +25,6 @@ enum class RedisServerType {
             handler.find(json.get("server").asString)
                 .orElseGet { handler.register(json.get("server").asString) }
         }
-
-        /**
-         * Serialize a server to a new json object
-         */
-        override fun toJson(server: Server): JsonObject {
-            return JsonObject().also {
-                it.addProperty("server", server.name)
-                it.addProperty("type", STARTUP.name)
-            }
-        }
     },
 
     MESSAGE {
@@ -56,14 +46,22 @@ enum class RedisServerType {
                 }
             }
         }
+    },
 
+    STAFF_CHAT {
         /**
-         * Serialize a server to a new json object
+         * Handle an incoming message
          */
-        override fun toJson(server: Server): JsonObject {
-            return JsonObject().also {
-                it.addProperty("server", server.name)
-                it.addProperty("type", MESSAGE.name)
+        override fun handle(json: JsonObject, handler: ServerHandler) {
+            Preconditions.checkArgument(json.has("server"), "No server field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("message"), "No message field found in provided JsonObject")
+            Preconditions.checkArgument(json.has("permission"), "No permission field found in provided JsonObject")
+
+            if (handler.localServer.name == json.get("server").asString) {
+                val message = json.get("message").asString
+                val permission = json.get("permission").asString
+
+                this.adapter.sendStaffChatMessage(message, permission)
             }
         }
     },
@@ -78,16 +76,6 @@ enum class RedisServerType {
 
             if (handler.localServer.name == json.get("server").asString) {
                 this.adapter.executeCommand(json.get("command").asString)
-            }
-        }
-
-        /**
-         * Serialize a server to a new json object
-         */
-        override fun toJson(server: Server): JsonObject {
-            return JsonObject().also {
-                it.addProperty("server", server.name)
-                it.addProperty("type", COMMAND.name)
             }
         }
     },
@@ -110,16 +98,6 @@ enum class RedisServerType {
 
             session.login(server)
         }
-
-        /**
-         * Serialize a server to a new json object
-         */
-        override fun toJson(server: Server): JsonObject {
-            return JsonObject().also {
-                it.addProperty("server", server.name)
-                it.addProperty("type", JOIN.name)
-            }
-        }
     },
 
     LOGOUT {
@@ -129,16 +107,6 @@ enum class RedisServerType {
         override fun handle(json: JsonObject, handler: ServerHandler) {
             findSession(json, handler).logout {
                 listener.handleDisconnect(it, it.server)
-            }
-        }
-
-        /**
-         * Serialize a server to a new json object
-         */
-        override fun toJson(server: Server): JsonObject {
-            return JsonObject().also {
-                it.addProperty("server", server.name)
-                it.addProperty("type", LOGOUT.name)
             }
         }
     };
@@ -151,7 +119,12 @@ enum class RedisServerType {
     /**
      * Serialize a server to a new json object
      */
-    abstract fun toJson(server: Server): JsonObject
+    fun toJson(server: Server): JsonObject {
+        return JsonObject().also {
+            it.addProperty("server", server.name)
+            it.addProperty("type", this.name)
+        }
+    }
 
     /**
      * Find a session

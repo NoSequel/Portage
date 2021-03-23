@@ -19,4 +19,14 @@ class MetadataCommand {
         StaffMetadataUtil.toggleMetadata(player, metadata, toggled)
         player.sendMessage(message)
     }
+
+    @Command(label = "togglestaffchat", aliases = ["togglesc", "tsc"], permission = "portage.staff")
+    fun toggleStaffChat(player: Player, toggled: Boolean) {
+        player.performCommand("metadata ${StaffMetadataUtil.StaffMetadataType.STAFF_CHAT} $toggled")
+    }
+
+    @Command(label = "toggleconnectivity", aliases = ["toggleconnect", "tc"], permission = "portage.staff")
+    fun toggleConnectivity(player: Player, toggled: Boolean) {
+        player.performCommand("metadata ${StaffMetadataUtil.StaffMetadataType.CONNECTIVITY} $toggled")
+    }
 }

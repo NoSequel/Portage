@@ -3,6 +3,7 @@ package io.github.nosequel.portage.server.command
 import io.github.nosequel.portage.bukkit.util.command.annotation.Command
 import io.github.nosequel.portage.core.server.`object`.Server
 import io.github.nosequel.portage.core.server.`object`.ServerHandler
+import io.github.nosequel.portage.core.server.`object`.redis.RedisServerType
 import org.apache.commons.lang.StringUtils
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
@@ -14,7 +15,9 @@ class StaffChatCommand(private val handler: ServerHandler) {
         this.handler.stream().forEach {
             it.sendMessage(
                 StaffChatType.STAFF.getMessage(message, handler.localServer, sender),
-                "portage.staff")
+                "portage.staff",
+                RedisServerType.STAFF_CHAT
+            )
         }
     }
 
@@ -23,7 +26,9 @@ class StaffChatCommand(private val handler: ServerHandler) {
         this.handler.stream().forEach {
             it.sendMessage(
                 StaffChatType.ADMIN.getMessage(message, handler.localServer, sender),
-                "portage.admin")
+                "portage.admin",
+                RedisServerType.STAFF_CHAT
+            )
         }
     }
 
@@ -32,7 +37,9 @@ class StaffChatCommand(private val handler: ServerHandler) {
         this.handler.stream().forEach {
             it.sendMessage(
                 StaffChatType.DEVELOPER.getMessage(message, handler.localServer, sender),
-                "portage.developer")
+                "portage.developer",
+                RedisServerType.STAFF_CHAT
+            )
         }
     }
 
