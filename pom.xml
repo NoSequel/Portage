@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>bukkit</module>
-        <module>core</module>
-        <module>server</module>
+        <module>shared</module>
+        <module>server-bukkit</module>
     </modules>
     <packaging>pom</packaging>
 

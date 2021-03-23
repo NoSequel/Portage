@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Portage-Server</artifactId>
+    <artifactId>Portage-Server-Bukkit</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
