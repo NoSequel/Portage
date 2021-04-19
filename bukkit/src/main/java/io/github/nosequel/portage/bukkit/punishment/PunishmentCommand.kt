@@ -18,7 +18,7 @@ import java.util.UUID
 class PunishmentCommand {
 
     private val punishmentHandler: PunishmentHandler =
-        HandlerManager.instance.findOrThrow(PunishmentHandler::class.java)
+        HandlerManager.findOrThrow(PunishmentHandler::class.java)
 
     @Command(label = "ban", permission = "portage.ban")
     fun ban(

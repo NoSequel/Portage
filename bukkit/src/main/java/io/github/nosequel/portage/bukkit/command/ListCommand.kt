@@ -13,13 +13,12 @@ import java.util.stream.Collectors
 
 class ListCommand {
 
-    private val rankHandler: RankHandler = HandlerManager.instance.findOrThrow(RankHandler::class.java)
-    private val grantHandler: GrantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+    private val rankHandler: RankHandler = HandlerManager.findOrThrow(RankHandler::class.java)
+    private val grantHandler: GrantHandler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
     @Command(label = "list")
     fun list(sender: CommandSender) {
-        val hiddenRanks =
-            this.rankHandler.stream().filter { it.hasMetadata(Metadata.HIDDEN) }.collect(Collectors.toList())
+        val hiddenRanks = this.rankHandler.getRanks().filter { it.hasMetadata(Metadata.HIDDEN) }
 
         if (hiddenRanks.isNotEmpty() && sender.hasPermission("portage.staff")) {
             sender.sendMessage("${ChatColor.YELLOW}There are ${hiddenRanks.size} hidden ranks, do /list all to view them.")
@@ -35,17 +34,17 @@ class ListCommand {
 
 
     private fun send(sender: CommandSender, hidden: Boolean) {
-        sender.sendMessage(this.rankHandler.stream()
-            .filter { !it.hasMetadata(Metadata.HIDDEN) || hidden }
-            .map { "${if (it.hasMetadata(Metadata.HIDDEN)) "${ChatColor.GRAY}*" else ""}${it.getDisplayName()}" }
-            .collect(Collectors.joining("${ChatColor.WHITE}, "))
+        sender.sendMessage(this.rankHandler.getRanks()
+                .filter { !it.hasMetadata(Metadata.HIDDEN) || hidden }
+                .map { "${if (it.hasMetadata(Metadata.HIDDEN)) "${ChatColor.GRAY}*" else ""}${it.getDisplayName()}" }
+                .joinToString { "$it${ChatColor.WHITE}" }
         )
 
         sender.sendMessage("${ChatColor.WHITE}(${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}) ${
             Bukkit.getOnlinePlayers().stream()
-                .sorted(Comparator.comparingInt { -this.grantHandler.findGrant(it.uniqueId).findRank().weight })
-                .map { grantHandler.findGrant(it.uniqueId).findRank().color + it.name + ChatColor.WHITE }
-                .toArray { arrayOfNulls<String>(Bukkit.getOnlinePlayers().size) }.asList()
+                    .sorted(Comparator.comparingInt { -this.grantHandler.findGrant(it.uniqueId).findRank().weight })
+                    .map { grantHandler.findGrant(it.uniqueId).findRank().color + it.name + ChatColor.WHITE }
+                    .toArray { arrayOfNulls<String>(Bukkit.getOnlinePlayers().size) }.asList()
         }")
     }
 }

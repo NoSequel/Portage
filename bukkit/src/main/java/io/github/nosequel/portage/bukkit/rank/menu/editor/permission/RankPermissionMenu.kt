@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class RankPermissionMenu(player: Player, val rank: Rank) : PaginatedMenu(player, "Viewing Permissions", 9*4) {
 
-    private val promptHandler: ChatPromptHandler = HandlerManager.instance.findOrThrow(ChatPromptHandler::class.java)
+    private val promptHandler: ChatPromptHandler = HandlerManager.findOrThrow(ChatPromptHandler::class.java)
 
     override fun getButtonsInRange(): MutableList<Button> {
         val buttons: MutableList<Button> = super.getButtonsInRange()

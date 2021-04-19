@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 
 class GrantsMenu(player: Player, private val target: UUID) : PaginatedMenu(player, "${player.name}'s Grants", 9) {
 
-    private val grantHandler: GrantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+    private val grantHandler: GrantHandler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
     override fun getButtons(): MutableList<Button> {
         val index = AtomicInteger()

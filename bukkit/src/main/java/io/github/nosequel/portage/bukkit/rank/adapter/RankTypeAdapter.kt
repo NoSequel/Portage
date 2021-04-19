@@ -9,11 +9,11 @@ import kotlin.jvm.Throws
 
 class RankTypeAdapter : TypeAdapter<Rank> {
 
-    private val rankHandler: RankHandler = HandlerManager.instance.findOrThrow(RankHandler::class.java)
+    private val rankHandler: RankHandler = HandlerManager.findOrThrow(RankHandler::class.java)
 
     @Throws(Exception::class)
     override fun convert(sender: CommandSender, source: String): Rank {
-        return this.rankHandler.find(source).orElse(null)
+        return this.rankHandler.find(source)!!
     }
 
     override val type: Class<Rank>

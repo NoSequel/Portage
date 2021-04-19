@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class CalendarMenu(player: Player, private val rank: Rank, private val target: UUID) : PaginatedMenu(player, "Select a Date", 9*4) {
 
     private var selectedDate = Date(System.currentTimeMillis())
-    private val promptHandler: ChatPromptHandler = HandlerManager.instance.findOrThrow(ChatPromptHandler::class.java)
+    private val promptHandler: ChatPromptHandler = HandlerManager.findOrThrow(ChatPromptHandler::class.java)
 
     override fun getButtonsInRange(): MutableList<Button> {
         val buttons: MutableList<Button> = super.getButtonsInRange()

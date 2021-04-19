@@ -16,7 +16,7 @@ class ServerHandler(serverName: String, val sessionHandler: SessionHandler) : Ha
 
     val localServer = this.register(serverName)
     val redis: RedisServerRepository =
-        RedisServerRepository(HandlerManager.instance.findOrThrow(DatabaseHandler::class.java).redis, this)
+        RedisServerRepository(HandlerManager.findOrThrow(DatabaseHandler::class.java).redis, this)
 
     override fun enable() {
         this.redis.publish(RedisServerType.STARTUP.toJson(this.localServer))

@@ -15,7 +15,7 @@ class RankHandler(val repository: RankRepository) : Handler {
     }
 
     override fun disable() {
-        this.stream().forEach {
+        this.getRanks().forEach {
             this.repository.updateAsync(it, it.name)
         }
     }
@@ -23,9 +23,8 @@ class RankHandler(val repository: RankRepository) : Handler {
     /**
      * Get the [Stream] object of [MutableSet] of [Rank]s
      */
-    fun stream(): Stream<Rank> {
-        return this.repository.cache.stream()
-            .sorted(Comparator.comparingInt { -it.weight })
+    fun getRanks(): List<Rank> {
+        return this.repository.cache.sortedBy { -it.weight }
     }
 
     /**
@@ -54,19 +53,17 @@ class RankHandler(val repository: RankRepository) : Handler {
      *
      * @return the optional of the rank
      */
-    fun find(name: String): Optional<Rank> {
-        return this.stream()
-            .filter { it.name.equals(name, true) }
-            .findAny()
+    fun find(name: String): Rank? {
+        return this.repository.cache.firstOrNull { it.name.equals(name, true) }
     }
 
     /**
      * Find all ranks with a certain metadata
      */
     fun find(metadata: Metadata): List<Rank> {
-        return this.stream()
-            .filter { it.hasMetadata(metadata) }
-            .toList()
+        return this.getRanks()
+                .filter { it.hasMetadata(metadata) }
+                .toList()
     }
 
     /**
@@ -75,8 +72,7 @@ class RankHandler(val repository: RankRepository) : Handler {
      * @return the default rank
      */
     fun findDefaultRank(): Rank {
-        return this.find(Metadata.HIDDEN).stream()
-            .findFirst()
-            .orElseGet { Rank("Default", Metadata.DEFAULT).also { this.register(it) } }
+        return this.repository.cache.firstOrNull { it.hasMetadata(Metadata.DEFAULT) }
+                ?: Rank("Default", Metadata.DEFAULT).also { this.register(it) }
     }
 }

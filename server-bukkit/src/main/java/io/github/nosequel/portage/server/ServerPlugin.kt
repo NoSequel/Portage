@@ -22,7 +22,7 @@ class ServerPlugin : JavaPlugin() {
     override fun onEnable() {
         this.saveDefaultConfig()
 
-        val handler: HandlerManager = HandlerManager.instance
+        val handler = HandlerManager
         val commandHandler = handler.findOrThrow(CommandHandler::class.java)
 
         val adapterHandler = ServerAdapterHandler(BukkitServerAdapter())

@@ -117,7 +117,7 @@ enum class RankEditorType(val displayName: String, val material: Material) {
         }
     };
 
-    val promptHandler: ChatPromptHandler = HandlerManager.instance.findOrThrow(ChatPromptHandler::class.java)
+    val promptHandler: ChatPromptHandler = HandlerManager.findOrThrow(ChatPromptHandler::class.java)
 
     /**
      * Get the lore for a specific [Rank]

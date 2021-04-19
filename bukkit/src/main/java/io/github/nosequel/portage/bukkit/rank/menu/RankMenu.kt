@@ -13,14 +13,14 @@ import java.util.stream.Collectors
 
 class RankMenu(player: Player) : PaginatedMenu(player, "Global Rank List", 18) {
 
-    private val rankHandler: RankHandler = HandlerManager.instance.findOrThrow(RankHandler::class.java)
+    private val rankHandler: RankHandler = HandlerManager.findOrThrow(RankHandler::class.java)
 
     override fun getButtons(): MutableList<Button> {
         val index = AtomicInteger()
 
-        return rankHandler.stream()
+        return rankHandler.getRanks()
             .map { RankInformationElement(player, it, index.getAndIncrement()) }
-            .collect(Collectors.toList())
+            .toMutableList()
     }
 
     override fun onClose(event: InventoryCloseEvent) {

@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PortagePlugin : JavaPlugin() {
 
-    private val handler: HandlerManager = HandlerManager()
+    private val handler: HandlerManager = HandlerManager
     private val portageAPI: PortageAPI = PortageAPI(handler, this.createDatabaseHandler())
 
     override fun onEnable() {

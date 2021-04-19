@@ -21,7 +21,7 @@ import java.util.UUID
 
 class GrantCommand {
 
-    private val grantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+    private val grantHandler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
     @Command(label = "grant", permission = "portage.grant")
     fun grant(player: Player, name: String) {

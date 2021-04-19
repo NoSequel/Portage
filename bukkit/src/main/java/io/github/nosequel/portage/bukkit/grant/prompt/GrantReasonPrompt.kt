@@ -13,7 +13,7 @@ import java.util.UUID
 
 class GrantReasonPrompt : ChatPrompt<GrantPromptData> {
 
-    private val grantHandler: GrantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+    private val grantHandler: GrantHandler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
     override fun getPromptText(player: Player, value: GrantPromptData): String {
         return "${ChatColor.YELLOW}Please provide a reason for this grant."

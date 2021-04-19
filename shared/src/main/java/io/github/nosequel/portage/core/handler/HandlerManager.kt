@@ -3,20 +3,9 @@ package io.github.nosequel.portage.core.handler
 import java.util.Optional
 import java.util.stream.Stream
 
-class HandlerManager(vararg handlers: Handler) {
+object HandlerManager {
 
     private val handlers: MutableMap<Class<Handler>, Handler> = mutableMapOf()
-
-    companion object {
-        lateinit var instance: HandlerManager
-    }
-
-    init {
-        instance = this
-        if (handlers.isNotEmpty()) {
-            handlers.forEach { this.register(it) }
-        }
-    }
 
     /**
      * Find a [Handler] by a [Class]

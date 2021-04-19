@@ -144,7 +144,7 @@ enum class RedisServerType {
         }
     }
 
-    val listener = HandlerManager.instance.findOrThrow(ConnectivityHandler::class.java).listener
-    val adapter = HandlerManager.instance.findOrThrow(ServerAdapterHandler::class.java).adapter
+    val listener = HandlerManager.findOrThrow(ConnectivityHandler::class.java).listener
+    val adapter = HandlerManager.findOrThrow(ServerAdapterHandler::class.java).adapter
 
 }

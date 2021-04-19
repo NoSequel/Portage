@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerLoginEvent
 class PunishmentListener : Listener {
 
     private val punishmentHandler: PunishmentHandler =
-        HandlerManager.instance.findOrThrow(PunishmentHandler::class.java)
+        HandlerManager.findOrThrow(PunishmentHandler::class.java)
 
 
     @EventHandler(priority = EventPriority.LOWEST)

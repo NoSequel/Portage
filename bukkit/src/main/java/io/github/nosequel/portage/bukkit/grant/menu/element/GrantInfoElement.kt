@@ -40,7 +40,7 @@ class GrantInfoElement(index: Int, val grant: Grant, menu: Menu) : ButtonBuilder
         }
 
         this.action {
-            val handler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+            val handler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
             if (grant.isActive()) {
                 handler.expireGrant(grant, ExpirationData("Unspecified", System.currentTimeMillis()))

@@ -17,7 +17,7 @@ import java.util.Optional
 
 class ChatPromptListener(private val handler: ChatPromptHandler) : Listener {
 
-    private val grantHandler: GrantHandler = HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+    private val grantHandler: GrantHandler = HandlerManager.findOrThrow(GrantHandler::class.java)
 
     @EventHandler
     fun join(event: PlayerJoinEvent) {

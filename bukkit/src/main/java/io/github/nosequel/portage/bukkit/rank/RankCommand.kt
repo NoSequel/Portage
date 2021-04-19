@@ -26,7 +26,7 @@ class RankCommand(handler: HandlerManager) {
 
     @Subcommand(label = "create", parentLabel = "rank", permission = "portage.rank.create")
     fun create(player: Player, rank: String) {
-        if (rankHandler.find(rank).isPresent) {
+        if (rankHandler.find(rank) != null) {
             player.sendMessage("${ChatColor.RED}A rank with the name ${ChatColor.DARK_RED}$rank${ChatColor.RED} already exists.")
             return
         }
@@ -51,7 +51,7 @@ class RankCommand(handler: HandlerManager) {
 
     @Subcommand(label = "list", parentLabel = "rank", permission = "portage.rank.list")
     fun list(player: Player) {
-        this.rankHandler.stream()
+        this.rankHandler.getRanks()
             .map { "${ChatColor.GRAY}${it.getDisplayName()}${ChatColor.GRAY} | ${ChatColor.WHITE}Weight: ${ChatColor.RED}${it.weight}" }
             .forEach { player.sendMessage(it) }
     }

@@ -48,7 +48,7 @@ class BukkitConnectivityListener : ConnectivityListener {
      */
     private fun getDisplayName(session: Session): String {
         return "${
-            ColorUtils.getRankColor(HandlerManager.instance.findOrThrow(GrantHandler::class.java)
+            ColorUtils.getRankColor(HandlerManager.findOrThrow(GrantHandler::class.java)
                 .findGrant(session.uuid).findRank())
         }${session.name}"
     }
